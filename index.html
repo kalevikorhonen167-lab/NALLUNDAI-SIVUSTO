@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NALLUNDAI</title>
+
+<style>
+:root{
+    --bg:#0a0f1f;
+    --panel:#121a2f;
+    --panel2:#18233f;
+    --green:#22c55e;
+    --red:#ef4444;
+    --yellow:#facc15;
+    --text:#fff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+
+body{background:var(--bg);color:var(--text);}
+
+.login-screen{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-card{
+    width:420px;
+    background:var(--panel);
+    padding:30px;
+    border-radius:15px;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:8px;
+    border:none;
+    background:var(--panel2);
+    color:white;
+}
+
+button{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:var(--green);
+    color:white;
+    margin:5px;
+}
+
+#dashboard{display:none;}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    padding:15px;
+    background:#0f1730;
+}
+
+.container{display:flex;}
+
+.sidebar{
+    width:260px;
+    min-height:100vh;
+    background:#10182d;
+    padding:20px;
+}
+
+.menu-item{
+    padding:12px;
+    background:var(--panel);
+    margin-bottom:10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.page{display:none;}
+.page.active{display:block;}
+
+.content{flex:1;padding:20px;}
+
+.card{
+    background:var(--panel);
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.company{
+    padding:12px;
+    margin:10px 0;
+    background:var(--panel2);
+    border-radius:10px;
+}
+
+.green{color:var(--green);}
+.red{color:var(--red);}
+.yellow{color:var(--yellow);}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginPage">
+<div class="login-card">
+<h2>🏛️ NALLUNDAI</h2>
+
+<input id="password" type="password" placeholder="Salasana">
+
+<select id="role">
+<option>Pääministeri</option>
+<option>Puolustusministeri</option>
+<option>Pankkiiri</option>
+<option>Poliisi</option>
+<option>Lääkäri</option>
+<option>Kierrättäjä</option>
+<option>Kirjastonhoitaja</option>
+<option>Rajavartija</option>
+<option>Valtio</option>
+</select>
+
+<button onclick="login()">Kirjaudu</button>
+</div>
+</div>
+
+<!-- DASH -->
+<div id="dashboard">
+
+<div class="topbar">
+<div>NALLUNDAI VALTIO</div>
+<div id="roleBox"></div>
+</div>
+
+<div class="container">
+
+<div class="sidebar">
+<div class="menu-item" onclick="show('home')">🏠 Etusivu</div>
+<div class="menu-item" onclick="show('budget')">📊 Budjetti</div>
+<div class="menu-item" onclick="show('companies')">🏢 Yritykset</div>
+<div class="menu-item" onclick="show('loans')">💰 Lainat</div>
+</div>
+
+<div class="content">
+
+<!-- HOME -->
+<div id="home" class="page active">
+    <div class="card">
+        <h2>🏠 Etusivu</h2>
+        <p>Tervetuloa Nallundaihin.</p>
+    </div>
+
+    <div class="card">
+        <h2>👑 Johto</h2>
+        <p>Pääministeri: Kalevi</p>
+        <p>Puolustusministeri: Roni</p>
+    </div>
+
+    <div class="card">
+        <h2>💰 Kassa</h2>
+        <h1 class="green">16 000 000 €</h1>
+    </div>
+</div>
+
+<!-- BUDGET -->
+<div id="budget" class="page">
+
+<div class="card">
+    <h2>📊 VALTION BUDJETTI</h2>
+</div>
+
+<div class="card">
+<h3 class="green">📈 TULOT</h3>
+<p>Olympialaiset: 6000</p>
+<p>Piilotulot: 2000</p>
+<p>Kirjastonhoitaja ATV: 24000</p>
+<p>Poliisi ATV: 24000</p>
+<p>Rajavartija ATV: 24000</p>
+<p>Pankkiiri ATV: 24000</p>
+<p>Lääkäri ATV: 24000</p>
+<p>Kierrättäjä ATV: 35000</p>
+<p>Pääministeri ATV: 21000</p>
+<p>Puolustusministeri ATV: 21000</p>
+<p>Sote-maksu: 24000</p>
+<p>Työttömyysmaksu: 24000</p>
+<p>Pankkimaksu: 48000</p>
+<p>Moniosamaksu: 72000</p>
+<p>Veppoho: 264000</p>
+<p>Yritysvero: 48000</p>
+<p>Osaketulot: 97000</p>
+<p>Lotto: 28000</p>
+<p>Omaisuusvero: 145000</p>
+</div>
+
+<div class="card">
+<h3 class="red">📉 MENOT</h3>
+<p>Kirjastonhoitaja palkka: 96000</p>
+<p>Poliisi palkka: 96000</p>
+<p>Kierrättäjä palkka: 108000</p>
+<p>Rajavartija palkka: 96000</p>
+<p>Lääkäri palkka: 96000</p>
+<p>Pankkiiri osuus: 24000</p>
+<p>Veppoho: 480000</p>
+<p>Pääministeri palkka: 72000</p>
+<p>Puolustusministeri palkka: 72000</p>
+</div>
+
+</div>
+
+<!-- COMPANIES -->
+<div id="companies" class="page">
+
+<div class="card"><h2>🏢 Yritykset</h2></div>
+
+<div class="company">
+<b>VepoHo</b><br>
+Omistaja: Kalevi Palmu<br>
+Arvo: 1 000 000 €
+</div>
+
+<div class="company">
+<b>Kirjasto Oy</b><br>
+Omistaja: VALTIO<br>
+Arvo: 900 000 €
+</div>
+
+<div class="company">
+<b>Panokset Uusiksi Oy</b><br>
+Omistaja: VALTIO<br>
+Arvo: 300 000 €
+</div>
+
+<div class="company">
+<b>Varasto Oy</b><br>
+Omistaja: VALTIO<br>
+Arvo: 200 000 €
+</div>
+
+<div class="company">
+<b>Mainostoimisto Oy</b><br>
+Omistaja: VALTIO<br>
+Arvo: 100 000 €
+</div>
+
+</div>
+
+<!-- LOANS -->
+<div id="loans" class="page">
+
+<div class="card">
+<h2>💰 Lainat</h2>
+
+<input id="loanName" placeholder="Nimi">
+<input id="loanAmount" placeholder="Summa">
+<input id="loanReason" placeholder="Syy">
+
+<button onclick="sendLoan()">Lähetä laina</button>
+
+<div id="loanList"></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+let role = "";
+let cash = 16000000;
+
+const passwords = {
+"Pääministeri":"7986",
+"Poliisi":"8234",
+"Kierrättäjä":"3456",
+"Puolustusministeri":"9765",
+"Rajavartija":"9088",
+"Kirjastonhoitaja":"3537",
+"Pankkiiri":"8474",
+"Lääkäri":"9967",
+"Valtio":"1111"
+};
+
+let loans = [];
+
+/* LOGIN */
+function login(){
+const selected = document.getElementById("role").value;
+const pass = document.getElementById("password").value;
+
+if(passwords[selected] !== pass){
+alert("Väärä salasana!");
+return;
+}
+
+role = selected;
+
+document.getElementById("loginPage").style.display="none";
+document.getElementById("dashboard").style.display="block";
+document.getElementById("roleBox").innerText="Rooli: "+role;
+}
+
+/* NAV */
+function show(page){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(page).classList.add("active");
+}
+
+/* LOANS */
+function sendLoan(){
+loans.push({
+name: document.getElementById("loanName").value,
+amount: document.getElementById("loanAmount").value,
+reason: document.getElementById("loanReason").value,
+status:"SAAPUNUT VALTIOLLE"
+});
+renderLoans();
+}
+
+function renderLoans(){
+const box=document.getElementById("loanList");
+box.innerHTML="";
+
+loans.forEach((l,i)=>{
+box.innerHTML+=`
+<div class="card">
+<b>${l.name}</b><br>
+💰 ${l.amount}€<br>
+📌 ${l.reason}<br>
+⚙ ${l.status}
+</div>`;
+});
+}
+
+</script>
+
+</body>
+</html>

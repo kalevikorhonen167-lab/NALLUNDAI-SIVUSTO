@@ -144,7 +144,6 @@ button{
 <div class="menu-item" onclick="show('home')">🏠 Etusivu</div>
 <div class="menu-item" onclick="show('budget')">📊 Budjetti</div>
 <div class="menu-item" onclick="show('companies')">🏢 Yritykset</div>
-<div class="menu-item" onclick="show('loans')">💰 Lainat</div>
 </div>
 
 <div class="content">
@@ -250,23 +249,7 @@ Arvo: 100 000 €
 
 </div>
 
-<!-- LOANS -->
-<div id="loans" class="page">
-
-<div class="card">
-<h2>💰 Lainat</h2>
-
-<input id="loanName" placeholder="Nimi">
-<input id="loanAmount" placeholder="Summa">
-<input id="loanReason" placeholder="Syy">
-
-<button onclick="sendLoan()">Lähetä laina</button>
-
-<div id="loanList"></div>
 </div>
-
-</div>
-
 </div>
 </div>
 
@@ -286,8 +269,6 @@ const passwords = {
 "Lääkäri":"9967",
 "Valtio":"1111"
 };
-
-let loans = [];
 
 /* LOGIN */
 function login(){
@@ -310,32 +291,6 @@ document.getElementById("roleBox").innerText="Rooli: "+role;
 function show(page){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(page).classList.add("active");
-}
-
-/* LOANS */
-function sendLoan(){
-loans.push({
-name: document.getElementById("loanName").value,
-amount: document.getElementById("loanAmount").value,
-reason: document.getElementById("loanReason").value,
-status:"SAAPUNUT VALTIOLLE"
-});
-renderLoans();
-}
-
-function renderLoans(){
-const box=document.getElementById("loanList");
-box.innerHTML="";
-
-loans.forEach((l,i)=>{
-box.innerHTML+=`
-<div class="card">
-<b>${l.name}</b><br>
-💰 ${l.amount}€<br>
-📌 ${l.reason}<br>
-⚙ ${l.status}
-</div>`;
-});
 }
 
 </script>

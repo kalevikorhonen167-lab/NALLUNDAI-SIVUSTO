@@ -107,7 +107,6 @@ button{
 
 <body>
 
-<!-- LOGIN -->
 <div class="login-screen" id="loginPage">
 <div class="login-card">
 <h2>🏛️ NALLUNDAI</h2>
@@ -130,7 +129,6 @@ button{
 </div>
 </div>
 
-<!-- DASH -->
 <div id="dashboard">
 
 <div class="topbar">
@@ -144,11 +142,12 @@ button{
 <div class="menu-item" onclick="show('home')">🏠 Etusivu</div>
 <div class="menu-item" onclick="show('budget')">📊 Budjetti</div>
 <div class="menu-item" onclick="show('companies')">🏢 Yritykset</div>
+<div class="menu-item" onclick="show('laws')">📜 Lait</div>
+<div class="menu-item" onclick="show('jobs')">💼 Työpaikat</div>
 </div>
 
 <div class="content">
 
-<!-- HOME -->
 <div id="home" class="page active">
     <div class="card">
         <h2>🏠 Etusivu</h2>
@@ -163,11 +162,10 @@ button{
 
     <div class="card">
         <h2>💰 Kassa</h2>
-        <h1 class="green">16 000 000 €</h1>
+        <h1 class="green">19 720 000 €</h1>
     </div>
 </div>
 
-<!-- BUDGET -->
 <div id="budget" class="page">
 
 <div class="card">
@@ -193,8 +191,10 @@ button{
 <p>Veppoho: 264000</p>
 <p>Yritysvero: 48000</p>
 <p>Osaketulot: 97000</p>
-<p>Lotto: 28000</p>
-<p>Omaisuusvero: 145000</p>
+<p>Lotto: 94000</p>
+<p>Omaisuusvero: 111000</p>
+<p>Kirjastotulot: 12000</p>
+<p>Tapahtumien ATV: 92000</p>
 </div>
 
 <div class="card">
@@ -208,11 +208,13 @@ button{
 <p>Veppoho: 480000</p>
 <p>Pääministeri palkka: 72000</p>
 <p>Puolustusministeri palkka: 72000</p>
+<div class="card" style="border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.1);">
+    <h3 style="color:#ef4444;">⚠️ ALIJÄÄMÄ</h3>
+    <p style="font-size: 1.2em; font-weight:bold;">-64 000 €</p>
+</div>
+</div>
 </div>
 
-</div>
-
-<!-- COMPANIES -->
 <div id="companies" class="page">
 
 <div class="card"><h2>🏢 Yritykset</h2></div>
@@ -231,7 +233,7 @@ Arvo: 900 000 €
 
 <div class="company">
 <b>Panokset Uusiksi Oy</b><br>
-Omistaja: VALTIO<br>
+Omistaja: ALEKSI SUOMINEN<br>
 Arvo: 300 000 €
 </div>
 
@@ -249,10 +251,142 @@ Arvo: 100 000 €
 
 </div>
 
-</div>
-</div>
+
+<div id="laws" class="page">
+    <div class="card">
+        <h2>📜 NALLUNDAIN LAIT</h2>
+        <p>§A1 JULKISILLA PAIKOILLA EI SAA AMPUA 🚫🔫 Tämä laki kieltää ammuskelun julkisilla paikoilla yleisen turvallisuuden takaamiseksi. Siviileille ampuminen on ehdottomasti kiellettyä missä tahansa tilanteessa.</p>
+        <p>§A2 AMPUMINEN TOISEEN / TOISEN HAAVOITTAMINEN 🩹🚑 Toisen ihmisen ampuminen tai fyysisen vamman aiheuttaminen on yksi yhteiskunnan vakavimmista rikoksista.</p>
+        <p>§AU3 ASEELLA UHKAILEMINEN ⚠️🔫 Aseella uhkaileminen on rikos, joka luo pelkoa ja turvattomuutta.</p>
+        <p>§AO4 ASEELLA OSOITTELU JULKISELLA PAIKALLA 🎯 Aseella osoittelu julkisella paikalla ilman pätevää syytä on vaaran tuottamus.</p>
+        <p>§AKJ5 ASEEN KANTAMINEN JULKISELLA PAIKALLA 🎒 Aseen kantaminen julkisella paikalla on sallittua vain, jos ase ei ole ladattu.</p>
+        <p>§PAKJ5 POLIISIEN TOIMENKUVA JA MÄÄRÄYKSET 🛡️ Poliisivoimien ja puolustusvoimien ensisijainen tehtävä on maansa ja kansansa suojeleminen.</p>
+        <p>§AVJ6 ASEEN VARASTAMINEN 🚨 Aseen varastaminen on erittäin vaarallinen rikos, josta seuraa aina oikeudellisia sanktioita.</p>
+        <p>§PAK7 POLIISIN ASEENKÄYTTÖ 👮‍♂️ Poliisin aseenkäyttö on aina viimesijainen keino.</p>
+        <p>§RL7 ROSKAAMISLAKI 🗑️ Roskaaminen on ympäristörikos, joka koskee kaikkia yhteiskunnan jäseniä.</p>
+        <p>§KOYLE8 KAIKKI ON YHDENVERTAISIA LAIN EDESSÄ ⚖️ Laki kohtelee jokaista kansalaista ja virkamiestä täysin tasa-arvoisesti.</p>
+        <p>§OTH9 OIKEUS TERVEYDENHUOLTOON 🏥 Terveydenhuolto on jokaisen perusoikeus.</p>
+        <p>§PPL10 PANTTIVANGIN LAKI ⛓️ Panttivankien ottaminen on erittäin vakava ja törkeä rikos.</p>
+        <p>§PYHKÖT11 POLIISINVOIMIEN HYVÄKSIKÄYTTÖ 🚔 Viranomaaseman väärinkäyttö on laitonta ja tuomittavaa.</p>
+        <p>§SVL12 SANANVAPAUSLAKI 🗣️ Jokaisella on perusoikeus ilmaista mielipiteensä vapaasti ilman pelkoa seuraamuksista.</p>
+        <p>§KV13 KOKOONTUMISVAPAUS 🤝 Jokaisella on oikeus kokoontua laillisesti julkisilla paikoilla.</p>
+        <p>§VV14 VEROVELVOLLISUUSLAKI 💰 Verot ovat yhteiskunnan rahoituksen perusta.</p>
+        <p>§RL15 RYÖSTÖLAKI 💰🥷 Kaikenlainen ryöstäminen on tiukasti kiellettyä ja rangaistavaa.</p>
+        <p>§VVV16 VIRKAVALLAN VASTUSTAMINEN 🛑 Virkavallan vastustaminen on vakava rikkomus.</p>
+        <p>§VVKV17 VIRKAVALLAN VÄKIVALTAINEN VASTUSTAMINEN 🥊 Väkivaltainen vastustaminen on törkeä rikos.</p>
+        <p>§AOS20 VAALILAHJONTA 🗳️ Vaalilahjonta on demokratian vastaista toimintaa.</p>
+        <p>§RY21 RIKOKSEEN YLLYTTÄMINEN 🗣️ Rikokseen yllyttäminen on toimintaa, jossa henkilö suostuttelee toista rikokseen.</p>
+        <p>§VHK23 VALHEELLISEN HÄTÄTILANTEEN KERTOMINEN 🚑 Valheellisen hätätilanteen ilmoittaminen on vaarallista.</p>
+        <p>§RKT24 RIKOKSEN UUSIMINEN 🔄 Rikoksen uusiminen on tilanne, jossa henkilö syyllistyy samaan rikokseen uudelleen.</p>
+        <p>§OMSJ24 OMAISUUDEN SUOJA 🏠 Omaisuudensuoja takaa oikeuden omistaa tavaroita.</p>
+        <p>§PTLJ25 PÄÄMINISTERIN LAKI 🏛️ Pääministerin tehtävä on toimia koko valtion ja kansan parhaaksi.</p>
+        <p>§VLV26 VAALIVILPPI 🗳️❌ Vaalivilppi on yksi demokratian vakavimmista rikoksista.</p>
+        <p>§T§RILJ27 TÖRKEÄN RIKOKSEN ILMIANTAMATTA JÄTTÄMINEN 🕵️ Ilmiantamatta jättäminen on rikos.</p>
+        <p>§SNTN28 SOPIMUSTEN NOUDATTAMINEN 📜 Sopimusten noudattaminen on yhteiskunnan luottamuksen edellytys.</p>
+        <p>§PLMK29 PALKAN MAKSU 💰 Työntekijällä on oikeus palkkaan tehdystä työstä.</p>
+        <p>§JPJM JULKISTEN PÄÄTÖSTEN JULKAISU 📢 Läpinäkyvyys on julkishallinnon tärkein periaate.</p>
+        <p>§PLVPTA32 POLIISIVOIMIEN RESURSSIEN TURHA TUHLAAMINEN 💸 Poliisin resurssien tuhlaaminen on väärinkäyttöä.</p>
+        <p>§LKTN33 LAKIEN TUNTEMINEN: Jokaisen on noudatettava voimassa olevia lakeja.</p>
+        <p>§PMEJV PÄÄMINISTERIN EROTTAMINEN JA VAALIT: Pääministerin erottaminen ja uudelleenvalinta.</p>
+    </div>
 </div>
 
+<style>
+    .job-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .job-box {
+        border: 2px solid #3498db;
+        padding: 25px; /* Enemmän tilaa laatikon sisällä */
+        border-radius: 12px;
+        background-color: #f0f7ff;
+        color: #2c3e50;
+        min-height: 180px; /* Suurempi korkeus */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    .job-title {
+        font-weight: bold;
+        font-size: 1.5em;
+        margin-bottom: 15px;
+        color: #e67e22;
+        border-bottom: 2px solid #bdc3c7;
+        padding-bottom: 5px;
+    }
+    .label {
+        font-weight: bold;
+        color: #2980b9;
+    }
+    .job-description {
+        margin-top: 10px;
+        font-style: italic;
+        color: #34495e;
+    }
+</style>
+
+<div class="card">
+    <h2>💼 Työpaikat</h2>
+    <div class="job-container">
+        <div class="job-box">
+            <div class="job-title">Lääkäri</div>
+            <div class="job-info"><span class="label">Palkka:</span> 96 000</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Pelastaa ihmishenkiä, hoitaa sairaita ja loukkaantuneita sekä varmistaa yhteisön terveydenhuollon toimivuuden.</div>
+        </div>
+        <div class="job-box">
+            <div class="job-title">Puolustusministeri</div>
+            <div class="job-info"><span class="label">Palkka:</span> -</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Johtaa maan puolustusta, hallinnoi turvallisuusstrategioita ja suojelee valtion koskemattomuutta.</div>
+        </div>
+        <div class="job-box">
+            <div class="job-title">Kirjastonhoitaja</div>
+            <div class="job-info"><span class="label">Palkka:</span> -</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Ylläpitää virallista sääntökirjaa ja lakeja, vastaa tiedon jakamisesta ja avustaa kansalaisia lakiasioissa.</div>
+        </div>
+        <div class="job-box">
+            <div class="job-title">Pääministeri</div>
+            <div class="job-info"><span class="label">Palkka:</span> -</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Toimii valtion ylimpänä johtajana, tekee strategisia päätöksiä ja valvoo hallinnon lakien noudattamista.</div>
+        </div>
+        <div class="job-box">
+            <div class="job-title">Poliisi</div>
+            <div class="job-info"><span class="label">Palkka:</span> -</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Valvoo yleistä järjestystä, puuttuu rikollisuuteen, tekee pidätyksiä ja huolehtii kansalaisten turvallisuudesta.</div>
+        </div>
+        <div class="job-box">
+            <div class="job-title">Rajavartija</div>
+            <div class="job-info"><span class="label">Palkka:</span> -</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Vastaa valtion rajojen valvonnasta, tarkastaa kulkijoita ja estää laittoman rajanylityksen.</div>
+        </div>
+        <div class="job-box">
+            <div class="job-title">Kierrättäjä</div>
+            <div class="job-info"><span class="label">Palkka:</span> -</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Kerää ja käsittelee käytettyjä materiaaleja, erityisesti panoksia, edistäen ympäristön siisteyttä ja kestävyyttä.</div>
+        </div>
+        <div class="job-box">
+            <div class="job-title">Pankkiiri</div>
+            <div class="job-info"><span class="label">Palkka:</span> -</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Hallinnoi valtion taloutta, valvoo rahaliikennettä ja varmistaa taloudellisen vakauden.</div>
+        </div>
+        <div class="job-box">
+            <div class="job-title">TTE</div>
+            <div class="job-info"><span class="label">Palkka:</span> -</div>
+            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
+            <div class="job-description">Suorittaa vaativia erikoistehtäviä, jotka vaativat erityisosaamista ja valmiutta kriisitilanteisiin.</div>
+        </div>
+    </div>
+</div>
 <script>
 
 let role = "";

@@ -93,8 +93,8 @@ button{
 }
 
 .company{
-    padding:12px;
-    margin:10px 0;
+    padding:25px;
+    margin:15px 0;
     background:var(--panel2);
     border-radius:10px;
 }
@@ -102,6 +102,59 @@ button{
 .green{color:var(--green);}
 .red{color:var(--red);}
 .yellow{color:var(--yellow);}
+
+/* Kriisi-osion tyylit */
+.crisis-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+.crisis-box {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--red);
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 8px;
+    color: white;
+    font-size: 1em;
+}
+
+/* Työpaikka-osion tyylit */
+.job-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+.job-box {
+    border: 2px solid #3498db;
+    padding: 25px;
+    border-radius: 12px;
+    background-color: #f0f7ff;
+    color: #2c3e50;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.job-title {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #e67e22;
+    border-bottom: 2px solid #bdc3c7;
+    padding-bottom: 5px;
+}
+.label {
+    font-weight: bold;
+    color: #2980b9;
+}
+.job-description {
+    margin-top: 10px;
+    font-style: italic;
+    color: #34495e;
+}
 </style>
 </head>
 
@@ -110,9 +163,7 @@ button{
 <div class="login-screen" id="loginPage">
 <div class="login-card">
 <h2>🏛️ NALLUNDAI</h2>
-
 <input id="password" type="password" placeholder="Salasana">
-
 <select id="role">
 <option>Pääministeri</option>
 <option>Puolustusministeri</option>
@@ -124,26 +175,24 @@ button{
 <option>Rajavartija</option>
 <option>Valtio</option>
 </select>
-
 <button onclick="login()">Kirjaudu</button>
 </div>
 </div>
 
 <div id="dashboard">
-
 <div class="topbar">
 <div>NALLUNDAI VALTIO</div>
 <div id="roleBox"></div>
 </div>
 
 <div class="container">
-
 <div class="sidebar">
 <div class="menu-item" onclick="show('home')">🏠 Etusivu</div>
 <div class="menu-item" onclick="show('budget')">📊 Budjetti</div>
 <div class="menu-item" onclick="show('companies')">🏢 Yritykset</div>
 <div class="menu-item" onclick="show('laws')">📜 Lait</div>
 <div class="menu-item" onclick="show('jobs')">💼 Työpaikat</div>
+<div class="menu-item" onclick="show('crisis')">⚠️ Kriisit</div>
 </div>
 
 <div class="content">
@@ -155,279 +204,313 @@ button{
     </div>
 
     <div class="card">
+        <h2>⚠️ Kriisitilanteet</h2>
+        <div class="crisis-container">
+            <div class="crisis-box">Ongelma 1</div>
+            <div class="crisis-box">Ongelma 2</div>
+            <div class="crisis-box">Ongelma 3</div>
+            <div class="crisis-box">Ongelma 4</div>
+            <div class="crisis-box">Ongelma 5</div>
+        </div>
+    </div>
+
+    <div class="card">
         <h2>👑 Johto</h2>
         <p>Pääministeri: Kalevi</p>
         <p>Puolustusministeri: Roni</p>
     </div>
-
+    
     <div class="card">
         <h2>💰 Kassa</h2>
         <h1 class="green">19 720 000 €</h1>
     </div>
 </div>
 
-<div id="budget" class="page">
-
-<div class="card">
-    <h2>📊 VALTION BUDJETTI</h2>
-</div>
-
-<div class="card">
-<h3 class="green">📈 TULOT</h3>
-<p>Olympialaiset: 6000</p>
-<p>Piilotulot: 2000</p>
-<p>Kirjastonhoitaja ATV: 24000</p>
-<p>Poliisi ATV: 24000</p>
-<p>Rajavartija ATV: 24000</p>
-<p>Pankkiiri ATV: 24000</p>
-<p>Lääkäri ATV: 24000</p>
-<p>Kierrättäjä ATV: 35000</p>
-<p>Pääministeri ATV: 21000</p>
-<p>Puolustusministeri ATV: 21000</p>
-<p>Sote-maksu: 24000</p>
-<p>Työttömyysmaksu: 24000</p>
-<p>Pankkimaksu: 48000</p>
-<p>Moniosamaksu: 72000</p>
-<p>Veppoho: 264000</p>
-<p>Yritysvero: 48000</p>
-<p>Osaketulot: 97000</p>
-<p>Lotto: 94000</p>
-<p>Omaisuusvero: 111000</p>
-<p>Kirjastotulot: 12000</p>
-<p>Tapahtumien ATV: 92000</p>
-</div>
-
-<div class="card">
-<h3 class="red">📉 MENOT</h3>
-<p>Kirjastonhoitaja palkka: 96000</p>
-<p>Poliisi palkka: 96000</p>
-<p>Kierrättäjä palkka: 108000</p>
-<p>Rajavartija palkka: 96000</p>
-<p>Lääkäri palkka: 96000</p>
-<p>Pankkiiri osuus: 24000</p>
-<p>Veppoho: 480000</p>
-<p>Pääministeri palkka: 72000</p>
-<p>Puolustusministeri palkka: 72000</p>
-<div class="card" style="border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.1);">
-    <h3 style="color:#ef4444;">⚠️ ALIJÄÄMÄ</h3>
-    <p style="font-size: 1.2em; font-weight:bold;">-64 000 €</p>
-</div>
-</div>
-</div>
-
-<div id="companies" class="page">
-
-<div class="card"><h2>🏢 Yritykset</h2></div>
-
-<div class="company">
-<b>VepoHo</b><br>
-Omistaja: Kalevi Palmu<br>
-Arvo: 1 000 000 €
-</div>
-
-<div class="company">
-<b>Kirjasto Oy</b><br>
-Omistaja: VALTIO<br>
-Arvo: 900 000 €
-</div>
-
-<div class="company">
-<b>Panokset Uusiksi Oy</b><br>
-Omistaja: ALEKSI SUOMINEN<br>
-Arvo: 300 000 €
-</div>
-
-<div class="company">
-<b>Varasto Oy</b><br>
-Omistaja: VALTIO<br>
-Arvo: 200 000 €
-</div>
-
-<div class="company">
-<b>Mainostoimisto Oy</b><br>
-Omistaja: VALTIO<br>
-Arvo: 100 000 €
-</div>
-
-</div>
-
-
-<div id="laws" class="page">
+<div id="crisis" class="page">
     <div class="card">
-        <h2>📜 NALLUNDAIN LAIT</h2>
-        <p>§A1 JULKISILLA PAIKOILLA EI SAA AMPUA 🚫🔫 Tämä laki kieltää ammuskelun julkisilla paikoilla yleisen turvallisuuden takaamiseksi. Siviileille ampuminen on ehdottomasti kiellettyä missä tahansa tilanteessa.</p>
-        <p>§A2 AMPUMINEN TOISEEN / TOISEN HAAVOITTAMINEN 🩹🚑 Toisen ihmisen ampuminen tai fyysisen vamman aiheuttaminen on yksi yhteiskunnan vakavimmista rikoksista.</p>
-        <p>§AU3 ASEELLA UHKAILEMINEN ⚠️🔫 Aseella uhkaileminen on rikos, joka luo pelkoa ja turvattomuutta.</p>
-        <p>§AO4 ASEELLA OSOITTELU JULKISELLA PAIKALLA 🎯 Aseella osoittelu julkisella paikalla ilman pätevää syytä on vaaran tuottamus.</p>
-        <p>§AKJ5 ASEEN KANTAMINEN JULKISELLA PAIKALLA 🎒 Aseen kantaminen julkisella paikalla on sallittua vain, jos ase ei ole ladattu.</p>
-        <p>§PAKJ5 POLIISIEN TOIMENKUVA JA MÄÄRÄYKSET 🛡️ Poliisivoimien ja puolustusvoimien ensisijainen tehtävä on maansa ja kansansa suojeleminen.</p>
-        <p>§AVJ6 ASEEN VARASTAMINEN 🚨 Aseen varastaminen on erittäin vaarallinen rikos, josta seuraa aina oikeudellisia sanktioita.</p>
-        <p>§PAK7 POLIISIN ASEENKÄYTTÖ 👮‍♂️ Poliisin aseenkäyttö on aina viimesijainen keino.</p>
-        <p>§RL7 ROSKAAMISLAKI 🗑️ Roskaaminen on ympäristörikos, joka koskee kaikkia yhteiskunnan jäseniä.</p>
-        <p>§KOYLE8 KAIKKI ON YHDENVERTAISIA LAIN EDESSÄ ⚖️ Laki kohtelee jokaista kansalaista ja virkamiestä täysin tasa-arvoisesti.</p>
-        <p>§OTH9 OIKEUS TERVEYDENHUOLTOON 🏥 Terveydenhuolto on jokaisen perusoikeus.</p>
-        <p>§PPL10 PANTTIVANGIN LAKI ⛓️ Panttivankien ottaminen on erittäin vakava ja törkeä rikos.</p>
-        <p>§PYHKÖT11 POLIISINVOIMIEN HYVÄKSIKÄYTTÖ 🚔 Viranomaaseman väärinkäyttö on laitonta ja tuomittavaa.</p>
-        <p>§SVL12 SANANVAPAUSLAKI 🗣️ Jokaisella on perusoikeus ilmaista mielipiteensä vapaasti ilman pelkoa seuraamuksista.</p>
-        <p>§KV13 KOKOONTUMISVAPAUS 🤝 Jokaisella on oikeus kokoontua laillisesti julkisilla paikoilla.</p>
-        <p>§VV14 VEROVELVOLLISUUSLAKI 💰 Verot ovat yhteiskunnan rahoituksen perusta.</p>
-        <p>§RL15 RYÖSTÖLAKI 💰🥷 Kaikenlainen ryöstäminen on tiukasti kiellettyä ja rangaistavaa.</p>
-        <p>§VVV16 VIRKAVALLAN VASTUSTAMINEN 🛑 Virkavallan vastustaminen on vakava rikkomus.</p>
-        <p>§VVKV17 VIRKAVALLAN VÄKIVALTAINEN VASTUSTAMINEN 🥊 Väkivaltainen vastustaminen on törkeä rikos.</p>
-        <p>§AOS20 VAALILAHJONTA 🗳️ Vaalilahjonta on demokratian vastaista toimintaa.</p>
-        <p>§RY21 RIKOKSEEN YLLYTTÄMINEN 🗣️ Rikokseen yllyttäminen on toimintaa, jossa henkilö suostuttelee toista rikokseen.</p>
-        <p>§VHK23 VALHEELLISEN HÄTÄTILANTEEN KERTOMINEN 🚑 Valheellisen hätätilanteen ilmoittaminen on vaarallista.</p>
-        <p>§RKT24 RIKOKSEN UUSIMINEN 🔄 Rikoksen uusiminen on tilanne, jossa henkilö syyllistyy samaan rikokseen uudelleen.</p>
-        <p>§OMSJ24 OMAISUUDEN SUOJA 🏠 Omaisuudensuoja takaa oikeuden omistaa tavaroita.</p>
-        <p>§PTLJ25 PÄÄMINISTERIN LAKI 🏛️ Pääministerin tehtävä on toimia koko valtion ja kansan parhaaksi.</p>
-        <p>§VLV26 VAALIVILPPI 🗳️❌ Vaalivilppi on yksi demokratian vakavimmista rikoksista.</p>
-        <p>§T§RILJ27 TÖRKEÄN RIKOKSEN ILMIANTAMATTA JÄTTÄMINEN 🕵️ Ilmiantamatta jättäminen on rikos.</p>
-        <p>§SNTN28 SOPIMUSTEN NOUDATTAMINEN 📜 Sopimusten noudattaminen on yhteiskunnan luottamuksen edellytys.</p>
-        <p>§PLMK29 PALKAN MAKSU 💰 Työntekijällä on oikeus palkkaan tehdystä työstä.</p>
-        <p>§JPJM JULKISTEN PÄÄTÖSTEN JULKAISU 📢 Läpinäkyvyys on julkishallinnon tärkein periaate.</p>
-        <p>§PLVPTA32 POLIISIVOIMIEN RESURSSIEN TURHA TUHLAAMINEN 💸 Poliisin resurssien tuhlaaminen on väärinkäyttöä.</p>
-        <p>§LKTN33 LAKIEN TUNTEMINEN: Jokaisen on noudatettava voimassa olevia lakeja.</p>
-        <p>§PMEJV PÄÄMINISTERIN EROTTAMINEN JA VAALIT: Pääministerin erottaminen ja uudelleenvalinta.</p>
+        <h2>⚠️ Kriisitilanteet</h2>
+        <div class="crisis-container">
+            <div class="crisis-box">YKV-YLEISEN VELKAANTUMISEN KRIISI 
+Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannutte 328 000 vuodessa ja suurin osa tästä alijäämästä tulee lotto arvoista, Emme voi kuitenkaan laskea sen hintaa sillä silloin niitä ostettaisiin vielä enemmän. JOS TÄLLE ASIALLE EI TEHDÄ MITÄÄN ON SEURAUKSET KAAMEAT MONEN IHMISEN KASSA ON TYHJÄ PIAN JA JOUDUTTE LAINATA  NOIN 330 000 JA SEURAAVANA VUONNA JO 470 000 JA KYMMENEN VUODEN PÄÄSTÄ 11 400 000. Mutta asialle on vaihtoehtoratkaisuja: 
+1.LOTON PERUMINEN/POISTAMINEN JA MYÖHEMMIN ELVYTTÄMINEN -->PALKKA LEIKKAUKSIA 168 000 BUDJETTI 1KANSALAISILLE JÄISI RAHAA YLIJÄÄMÄNÄ 108 000- PALKKA LEIKKAUKSET
+
+
+2. LOTON KERTA MÄÄRÄN PUOLITUS-->PALKKA LEIKKAUKSIA 84 000 JA KANSAN ALIJÄÄMÄ 110 000 BUDJETTI 2
+
+
+3.LOTON MAKSIMI ARPAMÄÄRÄNLAITTO 10 ARPAAN LEIKATAAN PALKKOJA 94 000 KANSAN ALIJÄÄMÄ 154 000 BUDJETTI 3</div>
+            <div class="crisis-box">Ongelma 2</div>
+            <div class="crisis-box">Ongelma 3</div>
+            <div class="crisis-box">Ongelma 4</div>
+            <div class="crisis-box">Ongelma 5</div>
+        </div>
     </div>
+</div>
+</div>
+<div id="budget" class="page">
+    <div id="budget-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px; font-family: sans-serif; background: #0f172a; color: white;">
+        
+        <div id="main-budget" style="background: #1e293b; padding: 20px; border-radius: 16px; border: 3px solid #38bdf8;">
+            <h2 style="color: #38bdf8; text-align: center;">📊 VARSINAINEN</h2>
+            <h3 style="color: #22c55e; border-bottom: 2px solid #22c55e;">📈 TULOT</h3>
+            <ul style="list-style: none; padding: 0; font-size: 0.8em;">
+                <li>Olympialaiset 8 000</li><li>Piilotulot 2 000</li><li>Kirjastonhoitaja ATV 24 000</li><li>Poliisi ATV 24 000</li><li>Rajavartija ATV 24 000</li><li>Pankkiiri ATV 27 000</li><li>Lääkäri ATV 38 000</li><li>Kierrättäjä ATV 38 000</li><li>Pääministeri ATV 24 000</li><li>Puolustusministeri ATV 24 000</li><li>Sote-maksu 24 000</li><li>Työttömyysmaksu 24 000</li><li>Pankkimaksu 48 000</li><li>Moniosamaksu 72 000</li><li>Veppoho 264 000</li><li>Yritysvero 60 000</li><li>Osaketulot 97 000</li><li>Tapahtumat 106 000</li><li>Lotto 94 000</li><li>Omaisuusvero 86 000</li><li>Kirjastotulo 22 000</li><li>Ministereiden omaisuusvero 49 000</li><li>Varastoyritystulot 40 000</li><li>VEPOHO/PANOKSET ALV 9 000</li>
+            </ul>
+            <h3 style="color: #ef4444; border-bottom: 2px solid #ef4444; margin-top: 15px;">📉 MENOT</h3>
+            <ul style="list-style: none; padding: 0; font-size: 0.8em;">
+                <li>Kirjastonhoitaja palkka 96 000</li><li>Poliisi palkka 96 000</li><li>Kierrättäjä palkka 120 000</li><li>Rajavartija palkka 96 000</li><li>Lääkäri palkka 120 000</li><li>Pankkiiri osuus 36 000</li><li>Veppoho 480 000</li><li>Pääministeri palkka 96 000</li><li>Puolustusministeri palkka 96 000</li><li>Panosten korjaus 20 000</li>
+            </ul>
+      <div style="margin-top: 30px; padding: 20px; background: #7f1d1d; border-radius: 12px; border: 2px solid #ef4444; text-align: center;">
+            <h3 style="margin: 0; color: #fca5a5;">⚠️ ALIJÄÄMÄ</h3>
+            <p style="font-size: 1.8rem; font-weight: bold; margin: 5px 0 0 0;">-67 000 €</p>
+        </div>
+    </div>
+
+        <div style="background: #1e293b; padding: 20px; border-radius: 16px; border: 3px solid #fbbf24;">
+            <h2 style="color: #fbbf24; text-align: center;">📊 BUDJETTI 1</h2>
+            <h3 style="color: #22c55e; border-bottom: 2px solid #22c55e;">📈 TULOT</h3>
+            <ul style="list-style: none; padding: 0; font-size: 0.8em;">
+                <li>Olympialaiset 8 000</li><li>Piilotulot 2 000</li><li>Kirjastonhoitaja ATV 12 000</li><li>Poliisi ATV 21 000</li><li>Rajavartija ATV 21 000</li><li>Pankkiiri ATV 21 000</li><li>Lääkäri ATV 30 000</li><li>Kierrättäjä ATV 30 000</li><li>Pääministeri ATV 18 000</li><li>Puolustusministeri ATV 18 000</li><li>Sote-maksu 24 000</li><li>Työttömyysmaksu 24 000</li><li>Pankkimaksu 48 000</li><li>Moniosamaksu 72 000</li><li>Vepoho 264 000</li><li>Yritysvero 60 000</li><li>Osaketulot 97 000</li><li>Tapahtumat 35 000</li><li>Lotto 0</li><li>Omaisuusvero 90 000</li><li>Kirjastotulo 22 000</li><li>Ministereiden omaisuusvero 51 000</li><li>Varastoyritystulot 40 000</li><li>VEPOHO/PANOKSET ALV 9 000</li><li>JÄÄDYTETTYJEN VAROJEN KÄYTTÖÖNOTTO MAKSU 5 000 PER HENKILÖ VUODESSA 15 000</li>
+            </ul>
+            <h3 style="color: #ef4444; border-bottom: 2px solid #ef4444; margin-top: 15px;">📉 MENOT</h3>
+            <ul style="list-style: none; padding: 0; font-size: 0.8em;">
+                <li>Kirjastonhoitaja palkka 48 000</li><li>Poliisi palkka 84 000</li><li>Kierrättäjä palkka 96 000</li><li>Rajavartija palkka 84 000</li><li>Lääkäri palkka 96 000</li><li>Pankkiiri osuus 12 000</li><li>Veppoho 480 000</li><li>Pääministeri palkka 72 000</li><li>Puolustusministeri palkka 72 000</li><li>Panosten korjaus 20 000</li>
+            </ul>
+      <div style="margin-top: 30px; padding: 20px; background: #7f1d1d; border-radius: 12px; border: 2px solid #ef4444; text-align: center;">
+            <h3 style="margin: 0; color: #fca5a5;">⚠️ ALIJÄÄMÄ</h3>
+            <p style="font-size: 1.8rem; font-weight: bold; margin: 5px 0 0 0;">-67 000 €</p>
+        </div>
+    </div>
+        <div style="background: #1e293b; padding: 20px; border-radius: 16px; border: 3px solid #fbbf24;">
+            <h2 style="color: #fbbf24; text-align: center;">📊 BUDJETTI 2</h2>
+            <h3 style="color: #22c55e; border-bottom: 2px solid #22c55e;">📈 TULOT</h3>
+            <ul style="list-style: none; padding: 0; font-size: 0.8em;">
+                <li>Olympialaiset 8 000</li><li>Piilotulot 2 000</li><li>Kirjastonhoitaja ATV 24 000</li><li>Poliisi ATV 24 000</li><li>Rajavartija ATV 24 000</li><li>Pankkiiri ATV 27 000</li><li>Lääkäri ATV 38 000</li><li>Kierrättäjä ATV 38 000</li><li>Pääministeri ATV 24 000</li><li>Puolustusministeri ATV 24 000</li><li>Sote-maksu 24 000</li><li>Työttömyysmaksu 24 000</li><li>Pankkimaksu 48 000</li><li>Moniosamaksu 72 000</li><li>Veppoho 264 000</li><li>Yritysvero 60 000</li><li>Osaketulot 97 000</li><li>Tapahtumat 106 000</li><li>Lotto 94 000</li><li>Omaisuusvero 86 000</li><li>Kirjastotulo 22 000</li><li>Ministereiden omaisuusvero 49 000</li><li>Varastoyritystulot 40 000</li><li>VEPOHO/PANOKSET ALV 9 000</li>
+            </ul>
+            <h3 style="color: #ef4444; border-bottom: 2px solid #ef4444; margin-top: 15px;">📉 MENOT</h3>
+            <ul style="list-style: none; padding: 0; font-size: 0.8em;">
+                <li>Kirjastonhoitaja palkka 96 000</li><li>Poliisi palkka 96 000</li><li>Kierrättäjä palkka 120 000</li><li>Rajavartija palkka 96 000</li><li>Lääkäri palkka 120 000</li><li>Pankkiiri osuus 36 000</li><li>Veppoho 480 000</li><li>Pääministeri palkka 96 000</li><li>Puolustusministeri palkka 96 000</li><li>Panosten korjaus 20 000</li>
+            </ul>
+        <div style="margin-top: 30px; padding: 20px; background: #7f1d1d; border-radius: 12px; border: 2px solid #ef4444; text-align: center;">
+            <h3 style="margin: 0; color: #fca5a5;">⚠️ ALIJÄÄMÄ</h3>
+            <p style="font-size: 1.8rem; font-weight: bold; margin: 5px 0 0 0;">-67 000 €</p>
+        </div>
+    </div>
+
+        <div style="background: #1e293b; padding: 20px; border-radius: 16px; border: 3px solid #fbbf24;">
+            <h2 style="color: #fbbf24; text-align: center;">📊 BUDJETTI 3</h2>
+            <h3 style="color: #22c55e; border-bottom: 2px solid #22c55e;">📈 TULOT</h3>
+            <ul style="list-style: none; padding: 0; font-size: 0.8em;">
+                <li>Olympialaiset 8 000</li><li>Piilotulot 2 000</li><li>Kirjastonhoitaja ATV 24 000</li><li>Poliisi ATV 24 000</li><li>Rajavartija ATV 24 000</li><li>Pankkiiri ATV 27 000</li><li>Lääkäri ATV 38 000</li><li>Kierrättäjä ATV 38 000</li><li>Pääministeri ATV 24 000</li><li>Puolustusministeri ATV 24 000</li><li>Sote-maksu 24 000</li><li>Työttömyysmaksu 24 000</li><li>Pankkimaksu 48 000</li><li>Moniosamaksu 72 000</li><li>Veppoho 264 000</li><li>Yritysvero 60 000</li><li>Osaketulot 97 000</li><li>Tapahtumat 106 000</li><li>Lotto 94 000</li><li>Omaisuusvero 86 000</li><li>Kirjastotulo 22 000</li><li>Ministereiden omaisuusvero 49 000</li><li>Varastoyritystulot 40 000</li><li>VEPOHO/PANOKSET ALV 9 000</li>
+            </ul>
+            <h3 style="color: #ef4444; border-bottom: 2px solid #ef4444; margin-top: 15px;">📉 MENOT</h3>
+            <ul style="list-style: none; padding: 0; font-size: 0.8em;">
+                <li>Kirjastonhoitaja palkka 96 000</li><li>Poliisi palkka 96 000</li><li>Kierrättäjä palkka 120 000</li><li>Rajavartija palkka 96 000</li><li>Lääkäri palkka 120 000</li><li>Pankkiiri osuus 36 000</li><li>Veppoho 480 000</li><li>Pääministeri palkka 96 000</li><li>Puolustusministeri palkka 96 000</li><li>Panosten korjaus 20 000</li>
+            </ul>
+       <div style="margin-top: 30px; padding: 20px; background: #7f1d1d; border-radius: 12px; border: 2px solid #ef4444; text-align: center;">
+            <h3 style="margin: 0; color: #fca5a5;">⚠️ ALIJÄÄMÄ</h3>
+            <p style="font-size: 1.8rem; font-weight: bold; margin: 5px 0 0 0;">-67 000 €</p>
+        </div>
+    </div>
+    </div>
+</div>
+<div id="companies" class="page">
+    <div class="card"><h2>🏢 Yritykset</h2></div>
+    <div class="company"><b>VepoHo</b><br>Omistaja: Kalevi Palmu<br>Arvo: 1 000 000 €</div>
+    <div class="company"><b>Kirjasto Oy</b><br>Omistaja: VALTIO<br>Arvo: 900 000 €</div>
+    <div class="company"><b>Panokset Uusiksi Oy</b><br>Omistaja: ALEKSI SUOMINEN<br>Arvo: 300 000 €</div>
+    <div class="company"><b>Varasto Oy</b><br>Omistaja: VALTIO<br>Arvo: 200 000 €</div>
+    <div class="company"><b>Mainostoimisto Oy</b><br>Omistaja: VALTIO<br>Arvo: 100 000 €</div>
 </div>
 
 <style>
-    .job-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin-top: 20px;
-    }
-    .job-box {
-        border: 2px solid #3498db;
-        padding: 25px; /* Enemmän tilaa laatikon sisällä */
+    .law-box {
+        background-color: #18233f;
+        padding: 15px;
+        margin-bottom: 10px;
         border-radius: 12px;
-        background-color: #f0f7ff;
-        color: #2c3e50;
-        min-height: 180px; /* Suurempi korkeus */
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-    }
-    .job-title {
-        font-weight: bold;
-        font-size: 1.5em;
-        margin-bottom: 15px;
-        color: #e67e22;
-        border-bottom: 2px solid #bdc3c7;
-        padding-bottom: 5px;
-    }
-    .label {
-        font-weight: bold;
-        color: #2980b9;
-    }
-    .job-description {
-        margin-top: 10px;
-        font-style: italic;
-        color: #34495e;
+        border-left: 5px solid #22c55e;
+        color: #ffffff;
     }
 </style>
+<div id="laws" class="page">
+    <div class="card">
+        <h2>📜 NALLUNDAIN KOKONAISET LAIT</h2>
+        
+<div class="law-box">§A1 JULKISILLA PAIKOILLA EI SAA AMPUA 🚫🔫 Tämä laki kieltää ammuskelun julkisilla paikoilla yleisen turvallisuuden takaamiseksi. Siviileille ampuminen on ehdottomasti kiellettyä missä tahansa tilanteessa. Poliiseilla on ainoa poikkeusoikeus käyttää asetta, mutta vain silloin, kun se on välttämätöntä yhteiskunnan turvaamiseksi tai vakavan rikoksen pysäyttämiseksi. Esimerkiksi tilanteessa, jossa henkilö on jo vahingoittanut muita tai pakenee väkivaltaisesti poliisin pysähtymiskäskystä huolimatta, poliisi voi harkita aseen käyttöä. Jos poliisi tai kansalainen rikkoo tätä sääntöä ilman laillista perustetta, seuraamuksena on välitön 5 000 euron sakko ilman mahdollisuutta valittaa päätöksestä. Tämä sääntö takaa, ettei julkinen tila muutu vaaralliseksi aseenkäytön vuoksi.</div>
 
-<div class="card">
-    <h2>💼 Työpaikat</h2>
-    <div class="job-container">
-        <div class="job-box">
-            <div class="job-title">Lääkäri</div>
-            <div class="job-info"><span class="label">Palkka:</span> 96 000</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Pelastaa ihmishenkiä, hoitaa sairaita ja loukkaantuneita sekä varmistaa yhteisön terveydenhuollon toimivuuden.</div>
-        </div>
-        <div class="job-box">
-            <div class="job-title">Puolustusministeri</div>
-            <div class="job-info"><span class="label">Palkka:</span> -</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Johtaa maan puolustusta, hallinnoi turvallisuusstrategioita ja suojelee valtion koskemattomuutta.</div>
-        </div>
-        <div class="job-box">
-            <div class="job-title">Kirjastonhoitaja</div>
-            <div class="job-info"><span class="label">Palkka:</span> -</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Ylläpitää virallista sääntökirjaa ja lakeja, vastaa tiedon jakamisesta ja avustaa kansalaisia lakiasioissa.</div>
-        </div>
-        <div class="job-box">
-            <div class="job-title">Pääministeri</div>
-            <div class="job-info"><span class="label">Palkka:</span> -</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Toimii valtion ylimpänä johtajana, tekee strategisia päätöksiä ja valvoo hallinnon lakien noudattamista.</div>
-        </div>
-        <div class="job-box">
-            <div class="job-title">Poliisi</div>
-            <div class="job-info"><span class="label">Palkka:</span> -</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Valvoo yleistä järjestystä, puuttuu rikollisuuteen, tekee pidätyksiä ja huolehtii kansalaisten turvallisuudesta.</div>
-        </div>
-        <div class="job-box">
-            <div class="job-title">Rajavartija</div>
-            <div class="job-info"><span class="label">Palkka:</span> -</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Vastaa valtion rajojen valvonnasta, tarkastaa kulkijoita ja estää laittoman rajanylityksen.</div>
-        </div>
-        <div class="job-box">
-            <div class="job-title">Kierrättäjä</div>
-            <div class="job-info"><span class="label">Palkka:</span> -</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Kerää ja käsittelee käytettyjä materiaaleja, erityisesti panoksia, edistäen ympäristön siisteyttä ja kestävyyttä.</div>
-        </div>
-        <div class="job-box">
-            <div class="job-title">Pankkiiri</div>
-            <div class="job-info"><span class="label">Palkka:</span> -</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Hallinnoi valtion taloutta, valvoo rahaliikennettä ja varmistaa taloudellisen vakauden.</div>
-        </div>
-        <div class="job-box">
-            <div class="job-title">TTE</div>
-            <div class="job-info"><span class="label">Palkka:</span> -</div>
-            <div class="job-info"><span class="label">Työnantaja:</span> Valtio</div>
-            <div class="job-description">Suorittaa vaativia erikoistehtäviä, jotka vaativat erityisosaamista ja valmiutta kriisitilanteisiin.</div>
+<div class="law-box">§A2 AMPUMINEN TOISEEN / TOISEN HAAVOITTAMINEN 🩹🚑 Toisen ihmisen ampuminen tai fyysisen vamman aiheuttaminen on yksi yhteiskunnan vakavimmista rikoksista. Laki asettaa tiukat rajat sille, miten fyysistä koskemattomuutta tulee kunnioittaa. Jos henkilö syyllistyy toisen haavoittamiseen, hänen on korvattava uhrille aiheutuneet kärsimykset 5 000 euron summalla sekä katettava kaikki uhrin sairaalakulut. Tämän lisäksi valtio perii tekijältä 5 000 euron sakon rikoksesta. Poliisin kohdalla on erityisohje: virkatehtävässä sattuneet haavoittamiset käsitellään ammattitaitoisesti, ja jos poliisi joutuu käyttämään voimaa, valtio huolehtii rikollisen sairaalakuluista. Poliisi saa haavoittaa kohdetta vain, jos tämä on välitön hengenvaara muille tai pakenee pitkään.</div>
+
+<div class="law-box">§AU3 ASEELLA UHKAILEMINEN ⚠️🔫 Aseella uhkaileminen on rikos, joka luo pelkoa ja turvattomuutta. Tämän lain tarkoituksena on estää aseiden käyttö pelotevälineenä. Uhkailu määritellään tilanteeksi, jossa henkilö osoittaa aseella tai käyttää sitä väkivaltaisen tilanteen luomiseen. Rangaistus tästä on 1 000 euroa korvauksia uhrille ja 2 000 euron sakko valtiolle. Poliisin osalta on voimassa erillinen säädös §PAU3: Poliisi saa osoittaa aseella vain, jos kohde uhkaa virkavaltaa aseella, hänellä on pidätysmääräys tai hän pakenee. Aiheeton aseella osoittelu on aina rikos, joka rinnastetaan suoraan uhkailuun, ja se johtaa samoihin sanktioihin. Jokainen on vastuussa aseen käytöstään tilanteesta riippumatta.</div>
+
+<div class="law-box">§AO4 ASEELLA OSOITTELU JULKISELLA PAIKALLA 🎯 Aseella osoittelu julkisella paikalla ilman pätevää syytä on vaaran tuottamus. Laki kieltää aseen suuntaamisen minnekään, missä se voi aiheuttaa pelkoa tai vaaraa muille ihmisille. Tämä sääntö on ehdoton ja koskee jokaista kansalaista sekä viranomaista. Vaikka laukauksia ei tapahtuisi, aseen suuntaaminen on itsessään rangaistava teko, sillä se rikkoo turvallisuusilmapiiriä. Rangaistuksena tästä on 1 000 euron sakko, ja kyseisestä päätöksestä ei ole mahdollista valittaa. Tämä korostaa aseen omistamisen ja kantamisen äärimmäistä vastuullisuutta. Virkavallankaan kohdalla aseen huolimaton käsittely ei ole sallittua, vaan it johtaa samoihin seuraamuksiin kuin siviileillä, varmistaen tasapuolisen kohtelun.</div>
+
+<div class="law-box">§AKJ5 ASEEN KANTAMINEN JULKISELLA PAIKALLA 🎒 Aseen kantaminen julkisella paikalla on sallittua vain, jos ase ei ole ladattu. This laki varmistaa, ettei vahinkolaukauksia tai äkillisiä väkivallantekoja tapahdu. Aseessa ei saa olla panoksia sisällä, kun se liikkuu yleisillä alueilla. Poliisi on valtuutettu tarkistamaan aseen tilan ja testaamaan sen toiminnan varmistaakseen turvallisuuden. Jos aseesta löytyy kiinnitettyjä panoksia, tekijä joutuu maksamaan 1 000 euron sakon. Jos ase osoittautuu täysin ladatuksi, rangaistus nousee 2 000 euroon. Tämä sääntö on kriittinen yleisen järjestyksen ylläpitämiseksi, sillä ladattu ase julkisella paikalla on aina merkittävä turvallisuusriski, jota ei voida hyväksyä missään olosuhteissa kansalaisten suojaksi.</div>
+
+<div class="law-box">§PAKJ5 POLIISIEN TOIMENKUVA JA MÄÄRÄYKSET 🛡️ Poliisivoimien ja puolustusvoimien ensisijainen tehtävä on maansa ja kansansa suojeleminen. Tämä laki määrittelee viranomaisen roolin vastuullisena toimijana, jonka on oltava aina valmiina reagoimaan rikollisuuteen ja turvallisuusuhkiin. Poliiseilla ja puolustusvoimien henkilöstöllä on virkatehtävissä lupa kantaa ladattua asetta, mutta vain aseluvan ja virkamääräysten puitteissa. Tämä antaa heille kyvyn puolustautua ja suojella sivullisia äkillisissä tilanteissa. Vaikka poliisilla on tämä oikeus, se ei poista vastuuta toimia harkiten. Heidän toimensa on aina perustuttava lain noudattamiseen, jotta luottamus viranomaisiin säilyy. Poliisin rooli on yhteiskunnan turvaverkkona, jota on kohdeltava kunnioituksella ja noudatettava sen annettuja ohjeita.</div>
+
+<div class="law-box">§AVJ6 ASEEN VARASTAMINEN 🚨 Aseen varastaminen on erittäin vaarallinen rikos, josta seuraa aina oikeudellisia sanktioita. Kun ase joutuu vääriin käsiin, se muodostaa välittömän riskin koko yhteisölle. Rangaistus tällaisesta teosta on 4000 euron sakko ja varastetun omaisuuden, eli aseen, välitön palauttaminen omistajalleen. Poliisi voi kuitenkin poikkeustilanteissa ottaa aseen haltuunsa kansalaiselta, jos se on tarpeen yleisen turvallisuuden suojelemiseksi tai rikoksen estämiseksi. Tällainen toiminta on kuitenkin tiukasti säädeltyä: jos poliisi takavarikoi aseen ilman pätevää syytä, hän syyllistyy itse virkarikokseen. Tämä tasapaino varmistaa, että aseen hallussapito pysyy laillisena ja valvottuna, eikä kenenkään omaisuutta riistetä ilman vakavaa ja todistettavaa perustetta.</div>
+
+<div class="law-box">§PAK7 POLIISIN ASEENKÄYTTÖ 👮‍♂️ Poliisin aseenkäyttö on aina viimesijainen keino. Tämä laki linjaa, että asetta saa käyttää vain silloin, kun kaikki muut keinot on kokeiltu tai tilanne on niin kriittinen, ettei vaihtoehtoja ole. Sallittuja tilanteita ovat väkivaltaiset aikeet, panttivankitilanteet, vaaralliset paot tai virallinen PM/PLM-määräys ampua. Jos poliisi käyttää asetta ilman näitä kriteerejä tai julkisella paikalla piittaamattomasti, kyseessä on rikos. Tämä laki suojaa kansalaisia viranomaisten ylilyönneiltä ja varmistaa, että voimankäyttö on aina suhteutettua. Jokainen aseenkäyttötilanne arvioidaan tarkasti, ja vastuu on aina poliisilla itsellään. Laki korostaa poliisin velvollisuutta suojella elämää ensisijaisena tavoitteenaan.</div>
+
+<div class="law-box">§RL7 ROSKAAMISLAKI 🗑️ Roskaaminen on ympäristörikos, joka koskee kaikkia yhteiskunnan jäseniä. Laki velvoittaa pitämään yhteiset tilat siisteinä ja keräämään roskat, jos niitä näkee. Erityistä huomiota kiinnitetään panosten osiin: kaikki käytetyt panokset on velvollisuus tuoda kierrätykseen, jotta ne voidaan uusia ja käyttää uudelleen. Tämä vähentää ympäristön kuormitusta ja estää vaarallisen jätteen leviämisen julkisille paikoille. Roskaamattomuus on kunnioituksen osoitus muita kohtaan, ja yhteinen vastuu pitää ympäristön turvallisena ja viihtyisänä. Jos henkilö havaitsee roskia, hänen tulee joko kerätä ne itse tai kertoa siitä roskien kerääjälle. Laki tekee ympäristön puhtaanapidosta yhteisön yhteisen velvollisuuden, jota jokaisen on noudatettava tinkimättä.</div>
+
+<div class="law-box">§KOYLE8 KAIKKI ON YHDENVERTAISIA LAIN EDESSÄ ⚖️ Laki kohtelee jokaista kansalaista ja virkamiestä täysin tasa-arvoisesti. Ketään ei saa suosia tai rangaista henkilökohtaisten mielipiteiden, varallisuuden tai sosiaalisen aseman takia. Viranomaisten päätöksenteon on pohjaututtava ainoastaan kiistattomaan näyttöön ja faktoihin, ei olettamuksiin. Vaikka aiempaa rikoshistoriaa voidaan käyttää apuna rangaistuksen arvioinnissa, pelkkä tausta tai huono maine eivät riitä syyllisyyden osoittamiseksi uudessa jutussa. Jokaisella on oikeus puolustautua ja tulla kuulluksi ennen päätöksentekoa. Mikäli viranomainen epäonnistuu tasapuolisuuden noudattamisessa ja suosii jotakuta, seurauksena on 3 000 euron sakko. Tämä varmistaa oikeusvarmuuden ja estää mielivallan käytön kaikessa päätöksenteoissa.</div>
+
+<div class="law-box">§OTH9 OIKEUS TERVEYDENHUOLTOON 🏥 Terveydenhuolto on jokaisen perusoikeus. Tämä laki takaa, että jokainen loukkaantunut tai sairastunut saa hoitoa välittömästi. Potilaiden hoidon kiireellisyys määritellään puhtaasti heidän tilansa vakavuuden mukaan, eikä suosittelua tai etuilua sallita. Potilastiedot ovat ehdottoman salaisia, ja niiden luvaton levittäminen on vakava rikkomus, josta seuraa 10 000 euron sakko ja vähintään 6 000 euron korvaukset uhrille. Mikäli hoitohenkilökunta tai viranomainen kieltäytyy antamasta tarvittavaa hoitoa, sakko on 9 000 euroa. Suosimisesta hoidossa rangaistaan 5 000 euron sakolla ja 3 000 euron korvauksilla. Laki pitää huolen siitä, että terveydenhuolto pysyy puolueettomana ja turvallisena palveluna kaikille.</div>
+
+<div class="law-box">§PPL10 PANTTIVANGIN LAKI ⛓️ Panttivankien ottaminen on erittäin vakava ja törkeä rikos, jota ei voida hyväksyä. Kukaan ei saa rajoittaa toisen ihmisen vapautta tai käyttää häntä välineenä omien vaatimustensa edistämiseksi. Tämä laki on tiukka, sillä se suojelee ihmishenkeä ja vapautta. Rikoksen tekijä joutuu maksamaan 5 000 euron sakon suoraan valtiolle, mikä toimii rangaistuksena lain rikkomisesta. Tämän lisäksi rikoksentekijän on maksettava uhrille 10 000 euron korvaukset aiheutetusta pelosta ja vapaudenriistosta. Laki korostaa, että panttivankitilanteet ovat äärimmäisen tuomittavia, ja yhteiskunta reagoi niihin ankarimmilla mahdollisilla sanktioilla suojellakseen kansalaisiaan ja estääkseen vastaavan toiminnan toistumisen jatkossa.</div>
+
+<div class="law-box">§PYHKÖT11 POLIISINVOIMIEN HYVÄKSIKÄYTTÖ 🚔 Viranomaisaseman väärinkäyttö on laitonta ja tuomittavaa. Poliisi ei saa käyttää valtaansa tai resurssejaan henkilökohtaiseen hyötyyn, kuten omien etujen ajamiseen tai virka-aseman käyttämiseen muiden painostamiseen. Kaikki pidätykset, tarkistukset ja uhkailut on tehtävä laillisen syyn perusteella, eikä niitä saa käyttää mielivaltaisesti. Virkavarusteita tai tarkkuusammuntaa ei saa harrastaa ilman asianmukaista lupaa. Jos poliisi käyttää voimiaan väärin, hänelle määrätään 12 000 euron sakko ja hänet asetetaan varoitukselle, jonka toistuminen johtaa potkuihin. Laki varmistaa, että poliisi pysyy kansan palvelijana, eikä muutu itse valtaa väärinkäyttäväksi toimijaksi, mikä on elinehto yhteiskunnan luottamukselle.</div>
+
+<div class="law-box">§SVL12 SANANVAPAUSLAKI 🗣️ Jokaisella on perusoikeus ilmaista mielipiteensä vapaasti ilman pelkoa seuraamuksista. Tämä laki suojelee mahdollisuutta arvostella hallintoa ja virkamiehiä, mikä on demokratian perusta. Sananvapauteen ei kuitenkaan kuulu uhkailu, kiristäminen tai kunnianloukkaus, jotka pysyvät kiellettyinä. Ketään ei saa myöskään pakottaa paljastamaan mielipiteitään, jos hän ei sitä halua. Mielipiteiden ilmaiseminen on vapaata niin kauan kuin se ei riko muita lakeja. Jos virkamies tai muu taho yrittää estää tai vaientaa jonkun mielipiteen, he syyllistyvät vakavaan rikokseen, josta seuraa 9 000 euron sakko. Tämä laki vahvistaa avointa ja keskustelevaa yhteiskuntaa, jossa jokaisella on ääni.</div>
+
+<div class="law-box">§KV13 KOKOONTUMISVAPAUS 🤝 Jokaisella on oikeus kokoontua laillisesti julkisilla paikoilla rauhanomaisia tarkoituksia varten. Tämä laki suojelee kansalaisten oikeutta ilmaista itseään yhteisöllisesti ja järjestää tapahtumia. Viranomaiset saavat rajoittaa kokoontumisia vain, jos ne aiheuttavat todellisen ja välittömän turvallisuusuhan tai rikkovat muita lakeja. Osallistujia on kohdeltava tasa-arvoisesti, eikä kokoontumisia saa estää mielivaltaisesti. Tämä laki varmistaa, että ihmisillä on tilaa ja mahdollisuus järjestäytyä yhteisten asioiden äärelle, kunhan toiminta pysyy lain puitteissa ja turvallisena kaikille läsnäolijoille. Se on demokraattisen yhteiskunnan kulmakivi, joka edistää yhteisöllisyyttä ja kansalaisaktiivisuutta tavalla, joka pysyy hallittuna ja vakaana.</div>
+
+<div class="law-box">§VV14 VEROVELVOLLISUUSLAKI 💰 Verot ovat yhteiskunnan rahoituksen perusta, ja jokaisen kansalaisen sekä yrityksen on osallistuttava niihin. Verotuksen on oltava mahdollisimman selkeää ja tasapuolista, jotta jokainen ymmärtää oman osuutensa. Valtion velvollisuus on kertoa avoimesti, mihin nämä verovarat käytetään. Verojen välttely on laitonta, sillä se vie resursseja yhteisiltä palveluilta, kuten terveydenhuollolta ja poliisilta. Valtion on hallinnoitava varoja vastuullisesti ja läpinäkyvästi. Tämä laki varmistaa, että verotusta noudatetaan oikeudenmukaisesti, ja jokainen kantaa kortensa kekoon. Veronmaksajat ansaitsevat tietää, että heidän panoksensa menee yhteiseen hyvään, ja verojen välttäminen katsotaan yhteiskunnan vastaisena toimintana.</div>
+
+<div class="law-box">§RL15 RYÖSTÖLAKI 💰🥷 Kaikenlainen ryöstäminen on tiukasti kiellettyä ja rangaistavaa. Laki luokittelee rikokset niiden vakavuuden mukaan: käyttöluvaton lainaaminen johtaa 1 000 euron sakkoihin molemmille osapuolille, kun taas näpistyksestä saa 2 000 euron sakon ja korvaukset. Varkaus johtaa kolminkertaiseen sakkoon suhteessa omaisuuden arvoon sekä korvauksiin. Suunniteltu ryöstö, kuten murto, tuottaa 15 000 euron sakon ja kuukauden vankeutta. Ryöstö, jossa käytetään väkivaltaa tai uhkailua, johtaa 19 000 euron sakkoon, 7 000 euron korvauksiin ja kolmen kuukauden vankeuteen. Törkein muoto, eli ryöstö asein ja vakavalla väkivallalla, johtaa 19 000 euron sakkoon, kuuden kuukauden vankeuteen ja 15 000 euron sairaalakorvauksiin.</div>
+
+<div class="law-box">§VVV16 VIRKAVALLAN VASTUSTAMINEN 🛑 Virkavallan vastustaminen tarkoittaa tilannetta, jossa henkilö yrittää estää poliisia tai muuta viranomaista tekemästä virkatehtäväänsä. Tämä voi ilmetä käskyjen noudattamatta jättämisenä, pakenemisena tai fyysisenä vastusteluna, kuten rimpumisena. Tällainen toiminta vaikeuttaa lainvalvontaa ja on vakava rikkomus yhteiskunnan järjestystä vastaan. Laki suojelee viranomaisia heidän työssään, jotta he voivat ylläpitää turvallisuutta. Rangaistus tällaisesta teosta on kolmen kuukauden vankilatuomio ja 3 000 euron sakko. Tämä sääntö on välttämätön, jotta poliisin antamat käskyt otetaan vakavasti ja yleinen järjestys pysyy vakaana. Se varmistaa, että jokainen kansalainen kunnioittaa viranomaisen asemaa ja yhteiskunnallisia pelisääntöjä.</div>
+
+<div class="law-box">§VVKV17 VIRKAVALLAN VÄKIVALTAINEN VASTUSTAMINEN 🥊 Väkivaltainen vastustaminen on törkeä rikos, jossa kohdistetaan fyysistä voimaa viranomaista vastaan. Tämä sisältää lyömisen, potkimisen tai aseella uhkaamisen, ja se vaarantaa viranomaisen hengen. Tällainen teko liitetään usein muihin rikoksiin, kuten ryöstöihin tai ampumisiin. Koska se estää poliisia hoitamasta turvallisuustehtäväänsä ja uhkaa ihmishenkeä, rangaistus on erittäin ankara: 15 000 euron sakko, kaksi kuukautta vankeutta sekä täysimääräiset korvaukset uhrille ja mahdolliset sairaalakulut. Laki lähettää selvän viestin, ettei väkivaltaa viranomaisia kohtaan hyväksytä missään tilanteessa. Se on välttämätön suoja niille, jotka työskentelevät yhteiskunnan turvallisuuden hyväksi vaarallisissakin olosuhteissa.</div>
+
+<div class="law-box">§AOS20 VAALILAHJONTA 🗳️ Vaalilahjonta on demokratian vastaista toimintaa, joka vääristää kansan tahdon. Laki kieltää kaikenlaiset palkkiot, edut, suoran rahan tai esimerkiksi velkojen anteeksiannon, joita tarjotaan vastineeksi äänestä. Myös tyypilliset työpaikkojen tai virkojen lupailut ovat rikollista vaalilahjontaa. Tämä laki on olemassa, jotta vaaliprosessi säilyy rehellisenä ja jokainen ääni annetaan aidon tahdon, eikä henkilökohtaisen edun perusteella. Jos henkilö jää kiinni vaalilahjonnasta, hänet tuomitaan 10 000 euron sakkoon. Tämä on kriittinen sääntö, joka takaa vaalien uskottavuuden ja estää rahan tai vallan väärinkäytön vaikuttamasta siihen, kuka yhteiskuntaa hallitsee ja millä perusteilla päätöksiä tehdään.</div>
+
+<div class="law-box">§RY21 RIKOKSEEN YLLYTTÄMINEN 🗣️ Rikokseen yllyttäminen on toimintaa, jossa henkilö suostuttelee tai houkuttelee toista rikoksen tekemiseen. Jos yllytetty kieltäytyy, yllyttäjä saa varoituksen ja 10 000 euron sakot. Jos yllytetty suostuu ja yrittää tehdä tai tekee rikoksen, yllyttäjä saa saman rangaistuksen kuin itse tekijä, mutta siihen lisätään vielä 6 000 euron yllytyslisä. Tämä laki estää ihmisiä toimimasta rikosten taustavaikuttajina ja hyötymästä muiden teoista. Se kantaa yllyttäjälle yhtä suuren moraalisen ja oikeudellisen vastuun kuin toteuttajalle. Yhteiskunta ei hyväksy "käskyläisten" käyttöä rikosten tekemiseen, ja rangaistukset yllytyksestä ovatkin erittäin painavia.</div>
+
+<div class="law-box">§VHK23 VALHEELLISEN HÄTÄTILANTEEN KERTOMINEN 🚑 Valheellisen hätätilanteen ilmoittaminen on vaarallista ja resurssien hukkaamista. Tämä tarkoittaa esimerkiksi sitä, että joku huijaa ampumisesta tai panttivankitilanteesta, vaikka mitään ei ole tapahtunut. Tällaiset teot sitovat poliisin ja pelastuslaitoksen resursseja, jotka voisivat olla tarpeen aidossa hädässä. Tästä rangaistuksena on 3 000 euron sakko. Ainoana poikkeuksena ovat viranomaisten, kuten PLM:n, suorittamat harjoitukset, joilla testataan valmiutta. Laki on tärkeä, jotta hätänumerot ja poliisivoimat pysyvät tehokkaina eikä yhteiskunnan turvallisuutta vaaranneta turhilla hälytyksillä. Se opettaa kansalaisille vastuullisuutta viranomaisten hälytysjärjestelmien ja resurssien käytössä.</div>
+
+<div class="law-box">§RKT24 RIKOKSEN UUSIMINEN 🔄 Rikoksen uusiminen on tilanne, jossa henkilö syyllistyy samaan rikokseen uudelleen. Laki toteaa, että jokainen uusittu teko on aina uusi, erillinen rikos, mutta rikoshistorialla on merkittävä vaikutus tuomion pituuteen. Oikeusjärjestelmä tarkastelee tekijän rikoshistoriaa, ja se toimii perusteena rangaistuksen kovenemiselle. Tämä laki varmistaa, että niitä, jotka eivät muuta käytöstään ja rikkovat lakia toistuvasti, kohdellaan ankarammin kuin ensikertalaisia. Se on keino suojella yhteiskuntaa sarjarikollisilta ja kannustaa vankeus- tai sakkoajan jälkeen pysyvään muutokseen rikollisessa käyttäytymisessä. Uusiminen on osoitus siitä, ettei ihminen ole oppinut virheistään, mikä vaikuttaa tuomion kovuuteen.</div>
+
+<div class="law-box">§OMSJ24 OMAISUUDEN SUOJA 🏠 Omaisuudensuoja takaa jokaiselle oikeuden omistaa tavaroita ja omaisuutta ilman pelkoa mielivaltaisesta takavarikosta. Valtio ei saa ottaa kenenkään omaisuutta haltuunsa ilman lakisääteistä perustetta tai muuta pätevää syytä, kuten rikoksen tutkintaa. Jos valtio tai viranomainen kuitenkin rikkoo tätä oikeutta ja ottaa omaisuutta perusteetta, omistajalla on oikeus 7 000 euron korvaukseen. Tämä laki suojaa kansalaisten yksityistä elämää ja varmistaa, ettei valtio voi toimia mielivaltaisesti kansalaisten henkilökohtaisen omaisuuden suhteen. Se on tärkeä osa oikeusvaltiota, joka antaa kansalaisille turvallisuudentunteen siitä, että omat saavutukset ja omaisuus ovat suojattuja viranomaisten mahdolliselta väärinkäytöksiltä.</div>
+
+<div class="law-box">§PTLJ25 PÄÄMINISTERIN LAKI 🏛️ Pääministerin tehtävä on toimia koko valtion ja kansan parhaaksi, ei ajaa omaa tai lähipiirinsä henkilökohtaista etua. Tämä laki kieltää virka-aseman käyttämisen mihinkään sellaiseen, joka ei suoraan edistä maan hyvinvointia. Pääministerin on noudatettava lakeja siinä missä muidenkin, eikä hän saa käyttää valtaansa tai resursseja omien etujen saavuttamiseen. Jos hän käyttää asemaansa väärin, seurauksena on 15 000 euron sakko ja varoitus. Jos väärinkäytös jatkuu, se johtaa virasta erottamiseen. Tämä laki varmistaa ylimmän johdon moraalisen ja laillisen vastuun, mikä on edellytys koko valtion vakaudelle ja kansalaisten luottamukselle johtoon.</div>
+
+<div class="law-box">§VLV26 VAALIVILPPI 🗳️❌ Vaalivilppi on yksi demokratian vakavimmista rikoksista. Se kattaa kaiken toiminnan, jolla pyritään vääristelemään vaalien tulosta, kuten äänien muokkaamisen, äänestämisen toisen nimissä tai äänestäjien painostamisen. Myös vaaliasiakirjojen väärentäminen on tiukasti kiellettyä. Koska vaalit ovat kansanvallan ydin, niihin kohdistuva petos horjuttaa koko yhteiskunnan perustaa. Rangaistus vaalivilpistä on erittäin kova: 19 000 euron sakko ja kolmen kuukauden vankeus. Tämä ankara rangaistus heijastaa teon vakavuutta ja suojelee äänestysprosessin koskemattomuutta, jotta jokainen ääni on aidosti annettua ja tulos vastaa kansan todellista tahtoa ilman ulkoista tai laitonta vaikuttamista.</div>
+
+<div class="law-box">§T§RILJ27 TÖRKEÄN RIKOKSEN ILMIANTAMATTA JÄTTÄMINEN 🕵️ Tämä laki velvoittaa kansalaisia ilmoittamaan viranomaisille, jos he tietävät erittäin vakavan rikoksen olevan tapahtumassa tai olevan vielä estettävissä. Ilmiantamatta jättäminen on rikos, sillä se tekee todistajasta osallisen rikoksen mahdollistamiseen. Jos henkilö tietää rikoksen suunnitelmista, mutta vaikenee, hän syyllistyy itse rikolliseen toimintaan. Tästä rangaistuksena on 10 000 euron sakko, joskin viranomaiset voivat harkinnan mukaan lieventää rangaistusta tietyissä erityistilanteissa. Laki korostaa yhteisöllistä vastuuta turvallisuuden ylläpitämisessä. Se varmistaa, ettei kukaan voi vain katsoa sivusta, kun yhteiskuntaa vaarantava rikos on toteutumassa, vaan jokaisen on toimittava viranomaisten apuna.</div>
+
+<div class="law-box">§SNTN28 SOPIMUSTEN NOUDATTAMINEN 📜 Sopimusten noudattaminen on yhteiskunnan toimivuuden ja luottamuksen edellytys. Tämä laki vahvistaa perusperiaatetta, jonka mukaan tehdyt sopimukset ovat sitovia ja niitä on noudatettava sellaisena kuin ne on sovittu. Jos toinen osapuoli rikkoo sopimusta, loukattu osapuoli on oikeutettu vaatimaan täyttä korvausta tai sopimuksen ehtojen noudattamista. Tämä turvaa kaupankäynnin ja yksilöiden väliset suhteet, varmistaen oikeudenmukaisuuden. Sopimukset antavat ennakoitavuutta ja suojaavat väärinkäytöksiltä, ja lakijärjestelmä seisoo niiden takana varmistaen, että sovituista asioista pidetään kiinni. Ilman tällaista sääntelyä yhteiskunta ajautuisi sekasortoon, jossa kukaan ei voisi luottaa toiseen.</div>
+
+<div class="law-box">§PLMK29 PALKAN MAKSU 💰 Työntekijällä on oikeus palkkaan tehdystä työstä, ja työnantajalla on velvollisuus maksaa se sovittuna ajankohtana. Tämä laki varmistaa oikeudenmukaisuuden työelämässä ja suojaa työntekijöitä hyväksikäytöltä. Työnantajan on palkan lisäksi toimitettava palkkalaskelma, josta käyvät ilmi mahdolliset lisät ja vähennykset sopimuksen mukaisesti. Tämä takaa työntekijälle taloudellisen turvan ja läpinäkyvyyden. Laki suojaa työntekijän oikeutta palkkaukseensa, mikä on perusta työelämän suhteille. Se varmistaa, että työpanos palkitaan sovitusti ja työnantaja kantaa vastuunsa työntekijöistään. Tämä luo vakautta työmarkkinoille ja estää palkanmaksuun liittyvät epäselvyydet ja konfliktit.</div>
+
+<div class="law-box">§JPJM JULKISTEN PÄÄTÖSTEN JULKAISU 📢 Läpinäkyvyys on julkishallinnon tärkein periaate. Kaikki viranomaisten tekemät päätökset on julkaistava kansalaisten nähtäväksi viimeistään kahden kuukauden kuluessa päätöksen tekemisestä. Tämä laki varmistaa, että kansalaisilla on oikeus tietää, miten heidän yhteiskuntaansa johdetaan. Poikkeuksena ovat vain erikseen salassa pidettävät tiedot, jotka liittyvät esimerkiksi turvallisuuteen. Jos viranomainen jättää tarkoituksella kertomatta päätöksistään, hän syyllistyy rikokseen, josta on 5 000 euron sakko. Tämä takaa sen, ettei päätöksenteko tapahdu salassa, ja kansa voi valvoa viranomaisten toimintaa, mikä on elintärkeää terveen ja avoimen demokratian ylläpitämiseksi.</div>
+
+<div class="law-box">§PLVPTA32 POLIISIVOIMIEN RESURSSIEN TURHA TUHLAAMINEN 💸 Poliisin resurssit, mukaan lukien ammukset ja varusteet, rahoitetaan veronmaksajien rahoilla. Tämän lain tarkoituksena on estää resurssien turha tuhlaaminen. Jos poliisi käyttää asettaan tai muita resursseja ilman todellista virkatehtävää tai laillista syytä, kyseessä on väärinkäyttö. Rangaistuksena tästä tuhlaamisesta poliisi velvoitetaan ostamaan uudet panokset tai korvaamaan käytetyt resurssit omista varoistaan. Tämän lisäksi hänelle määrätään 1 000 euron sakko. Tämä laki opettaa viranomaisille vastuullisuutta julkisten varojen käytössä ja varmistaa, ettei kallista kalustoa tuhlata leikkimiseen tai harkitsemattomaan toimintaan. Se on keskeinen sääntö viranomaisten ammattitaidon ja nuhteettomuuden varmistamiseksi.</div>
+
+<div class="law-box">§LKTN33 LAKIEN TUNTEMINEN: Jokaisen on noudatettava voimassa olevia lakeja ja sääntöjä. Se, ettei pelaaja tunne lakia tai sääntöä ei vapauta häntä vastuusta esimerkiksi, jos hän on tehnyt rikoksen ja sanoo, että hän ei tiennyt siitä laista. Lait löytyvät kirjastosta. Kirjasto säilyttää virallisen sääntökirjan ja lait. Jokaisella pelaajalla on oikeus käydä tarkistamassa lait ja kysyä niiden sisällöstä kirjastonhoitajalta. Tähän poikkeuksena, että lait eivät astu heti voimaan vasta silloin kun ne julkaistaan.</div>
+
+<div class="law-box">§PMEJV PÄÄMINISTERIN EROTTAMINEN JA VAALIT: 1. Pääministerin erottaminen jos pääministeri rikkoo lakia, hänet voidaan erottaa tehtävästään päätöksellä, jonka tekee esimerkiksi tuomioistuin poliisi ja/tai enemmistö pelaajista. 2. OIKEUS ASETTUA EHDOLLE: Kun seuraavat vaalit järjestetään erotettu pääministeri saa asettua ehdolle uudestaan samalla tavalla kuin muutkin ehdokkaat. 3. ÄÄNESTÄJIEN PÄÄTÖS pelaajat päättävät vaaleissa, haluavatko he valita hänet uudelleen pääministeriksi.</div>
+
+<div class="law-box">🧾 §RYL34 RAJANYLITYSLAKI Rajanylittäminen ilman voimassa olevaa passia tai muuta virallista henkilöllisyystodistusta on kielletty 🚫. Tämä sääntö on olemassa, jotta voidaan varmistaa henkilön henkilöllisyys, sekä se kuka saapuu maahan ja kuka sieltä poistuu. Rajavartijoilla ja poliisilla on oikeus pysäyttää henkilö, tarkistaa henkilöllisyys ja tarvittaessa pidättää henkilö tilanteissa, joissa asiakirjat puuttuvat tai henkilöllisyys jää epäselväksi. Jos henkilö ylittää rajan ilman vaadittuja asiakirjoja tai ilman selvää henkilöllisyyttä, voidaan määrätä enintään 8000 yksikön sakko. Lain tarkoituksena on turvata valtakunnan turvallisuus, estää laiton rajaliikenne ja varmistaa, että viranomaisilla on tieto maahan saapuvista ja sieltä poistuvista henkilöistä.</div>
+
+<div class="law-box">🧾 §RYAJPK35 RAJANYLITTÄMINEN ASEEN JA PANOSTEN KANSSA Ampuma-aseen kanssa rajanylitys on sallittua vain erityisehtojen täyttyessä. Aseen tulee olla purkutilassa, se ei saa olla ladattu, eikä siinä saa olla panoksia. Lisäksi henkilöllä on oltava voimassa oleva rajanylitysaselupa sekä hyväksyttävä peruste aseen mukana kuljettamiselle. Jos ase on ladattu tai panoksia kuljetetaan ilman asianmukaista ilmoitusta, teko katsotaan vakavaksi turvallisuusrikkomukseksi, josta voidaan määrätä enintään 12 000 yksikön sakko. Kaikki panokset on ilmoitettava rajatarkastuksessa. Ilmoittamatta jätetyt panokset voidaan katsoa salakuljetukseksi, ja niiden käsittelyä koskevat tarkemmat säännökset määritellään §SKL36 salakuljetuslaissa. Lain tarkoituksena on estää vaaratilanteet rajalla, torjua rikollisuutta ja terrorismia sekä varmistaa kansalaisten ja valtion turvallisuus.</div>
+
+<div class="law-box">🧾 §SKL36 SALAKULJETUSLAKI Salakuljetukseksi katsotaan kaiken sellaisen tavaran, esineen tai aineen kuljettaminen valtion rajan yli tai sen kautta, jota ei ole ilmoitettu asianmukaisesti viranomaisille tai jonka maahantuonti tai maastavienti on laissa rajoitettu tai kielletty. Salakuljetus voi koskea esimerkiksi: aseita, panoksia tai ampumatarvikkeita; suuria rahasummia ilman ilmoitusvelvollisuuden täyttämistä ja on kerrottava mistä se on tullut; muuta valvottavaa omaisuutta tai tavaraa, jota ei ole asianmukaisesti ilmoitettu rajatarkastuksessa. 👮‍♂️ Rajaviranomaisilla, tullilla ja poliisilla on oikeus pysäyttää, tarkastaa ja takavarikoida tavara, jos on perusteltu epäilys salakuljetuksesta tai ilmoitusvelvollisuuden rikkomisesta. 💰 Salakuljetuksesta voidaan määrätä sakko enintään 15 000 yksikköä, ja lisäksi salakuljetettu tavara tai raha voidaan takavarikoida valtiolle. Vakavissa tapauksissa asia voidaan käsitellä rikosoikeudellisesti. 🎯 Lain tarkoituksena on: estää laiton tavaraliikenne rajan yli, suojella valtion turvallisuutta ja taloutta, ehkäistä rikollisuutta ja rahanpesua sekä varmistaa, että kaikki rajaliikenne on valvottua ja läpinäkyvää.</div>
+
+<div class="law-box">§LTPPL37 LAIN TOIMEENPANOLLE PISTÄMISLAKI: Laki on vasta hyväksytty kun pääministeri ja puolustusministeri on sen hyväksynyt. Tämä on demokratian edistämiseksi, jolla varmistetaan se, että valta ei keskity yhdelle ihmiselle. Jos pääministeri tai puolustusministeri päättää itse lain ja julkaisee ja toimeenpanee sen, hän on tehnyt törkeän demokratiaa halventavan rikoksen. Rangaistuksena tästä törkeästä rikkeestä: 10 000 sakko, lain peruminen ja käsittelyyn vieminen ja ½ varoituksesta ennen potkuja työstä. Tämä on laki jota kukaan ei voi muuttaa eikä kumota.</div>
+
+<div class="law-box">§ PTAL38: Pääministerin ja puolustusministerin toimintakausien rajoituslaki 🏛️⏳ 1. Toimikausien enimmäismäärä: Sama henkilö voidaan valita pääministerin tai puolustusministerin virkaan korkeintaan kolmeksi (3) peräkkäiseksi toimikaudeksi. 2. Karessi eli vaalikielto: Kun ministeri on palvellut kolme kautta peräkkäin, hän astuu automaattisesti syrjään eikä voi asettua ehdolle samaan virkaan seuraavissa vaaleissa. Hänen on pidettävä vähintään yhden kauden mittainen tauko kyseisestä virasta. 3. Vastakkaisen viran poikkeus (Ristiinedustus): Esteestä huolimatta kolme kautta täyteen saanut ministeri saa heti seuraavissa vaaleissa asettua ehdolle vastakkaiseen ministerin virkaan. Esimerkki: Jos esimerkkihenkilö on ollut pääministeri 3 kautta, hän ei voi heti pyrkiä uudestaan pääministeriksi, mutta hän voi asettua ehdolle puolustusministeriksi. 4. Paluuoikeus tauon jälkeen: Yhden välikauden (tauon) jälkeen ministerillä on täysi oikeus palata takaisin vanhaan virkaansa, mikäli kansa valitsee hänet vaaleissa uudelleen. Tällöin kolmen kauden laskuri alkaa taas alusta (nollasta).</div>
+
+<div class="law-box">§ PUVP39: Pääministerin ja puolustusministerin uudelleenvalinnan poikkeuslaki (Kansanäänestyslaki) 🗳️📜 1. Kansanäänestyksen järjestäminen: Ennen virallisten ministerivaalien aloittamista valtio voi järjestää suoran kansanäänestyksen. Äänestyksessä kansalta (kaikilta 10 pelaajalta) kysytään suoraan, haluavatko he pitää nykyisen ministerin virassaan ilman normaalia vaalikilpailua. 2. Äänestysvaihtoehdot: Pelaajat äänestävät salaisella tai julkisella äänestyksellä kahdesta vaihtoehdosta: A-vaihtoehto: "Jatketaan nykyisellä ministerillä" (Ministeri saa suoraan uuden kauden). B-vaihtoehto: "Haluamme uuden ministerin" (Järjestetään normaalit vaalit, joissa uudet ehdokkaat voivat pyrkiä virkaan). 3. Soveltaminen molempiin virkoihin: Tätä poikkeuslakia sovelletaan erikseen sekä pääministeriin että puolustusministeriin. Kansa voi siis päättää äänestyksessä esimerkiksi niin, että pääministeri jatkaa suoraan, mutta puolustusministeri laitetaan vaihtoon tavallisten vaalien kautta.</div>
+    </div>
+</div>
+<<div id="jobs" class="page">
+    <div class="card">
+        <h2>💼 Työpaikat</h2>
+        <div class="job-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 20px;">
+            
+            <!-- Työpaikat nyt law-box tyylillä -->
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">Lääkäri</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> 96 000</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Pelastaa ihmishenkiä, hoitaa sairaita ja loukkaantuneita sekä varmistaa yhteisön terveydenhuollon toimivuuden.</div>
+            </div>
+
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">Puolustusministeri</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> 48 000</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Johtaa maan puolustusta, hallinnoi turvallisuusstrategioita ja suojelee valtion koskemattomuutta.</div>
+            </div>
+
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">Kirjastonhoitaja</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> 96 000</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Ylläpitää virallista sääntökirjaa ja lakeja, vastaa tiedon jakamisesta ja avustaa kansalaisia lakiasioissa.</div>
+            </div>
+
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">Pääministeri</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> 48 000</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Toimii valtion ylimpänä johtajana, tekee strategisia päätöksiä ja valvoo hallinnon lakien noudattamista.</div>
+            </div>
+
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">Poliisi</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> 96 000</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Valvoo yleistä järjestystä, puuttuu rikollisuuteen, tekee pidätyksiä ja huolehtii kansalaisten turvallisuudesta.</div>
+            </div>
+
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">Rajavartija</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> 96 000</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Vastaa valtion rajojen valvonnasta, tarkastaa kulkijoita ja estää laittoman rajanylityksen.</div>
+            </div>
+
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">Kierrättäjä</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> -</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Kerää ja käsittelee käytettyjä materiaaleja, erityisesti panoksia, edistäen ympäristön siisteyttä ja kestävyyttä.</div>
+            </div>
+
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">Pankkiiri</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> -</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Hallinnoi valtion taloutta, valvoo rahaliikennettä ja varmistaa taloudellisen vakauden.</div>
+            </div>
+
+            <div class="law-box" style="background-color: #18233f; padding: 15px; border-radius: 12px; border-left: 5px solid #22c55e; color: #ffffff;">
+                <div class="job-title" style="font-weight: bold; font-size: 1.2em; color: #facc15; margin-bottom: 5px;">TTE</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Palkka:</span> -</div>
+                <div class="job-info"><span class="label" style="color: #22c55e;">Työnantaja:</span> Valtio</div>
+                <div class="job-description" style="font-style: italic; margin-top: 5px;">Suorittaa vaativia erikoistehtäviä, jotka vaativat erityisosaamista ja valmiutta kriisitilanteisiin.</div>
+            </div>
         </div>
     </div>
 </div>
+
+</div>
+</div>
+
 <script>
-
 let role = "";
-let cash = 16000000;
-
 const passwords = {
-"Pääministeri":"7986",
-"Poliisi":"8234",
-"Kierrättäjä":"3456",
-"Puolustusministeri":"9765",
-"Rajavartija":"9088",
-"Kirjastonhoitaja":"3537",
-"Pankkiiri":"8474",
-"Lääkäri":"9967",
-"Valtio":"1111"
+"Pääministeri":"7986", "Poliisi":"8234", "Kierrättäjä":"3456", "Puolustusministeri":"9765", "Rajavartija":"9088", "Kirjastonhoitaja":"3537", "Pankkiiri":"8474", "Lääkäri":"9967", "Valtio":"1111"
 };
 
-/* LOGIN */
 function login(){
 const selected = document.getElementById("role").value;
 const pass = document.getElementById("password").value;
-
-if(passwords[selected] !== pass){
-alert("Väärä salasana!");
-return;
-}
-
+if(passwords[selected] !== pass){ alert("Väärä salasana!"); return; }
 role = selected;
-
 document.getElementById("loginPage").style.display="none";
 document.getElementById("dashboard").style.display="block";
 document.getElementById("roleBox").innerText="Rooli: "+role;
 }
 
-/* NAV */
 function show(page){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(page).classList.add("active");
 }
-
 </script>
-
 </body>
 </html>

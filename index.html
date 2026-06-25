@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NALLUNDAI</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NALLUNDAI</title>
+  
 <style>
 :root{
     --bg:#0a0f1f;
@@ -81,20 +81,45 @@ button{
 
 .content{flex:1;padding:20px;}
 
-.card{
-    background:var(--panel);
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:15px;
+.card {
+    background: var(--panel);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    
+    /* Nämä varmistavat, ettei kortti ole liian pieni: */
+    width: 95%;           /* Käyttää 95% näytön leveydestä */
+    max-width: 500px;     /* Ei veny liian suureksi pöytäkoneella */
+    margin-left: auto;    /* Keskiittää kortin */
+    margin-right: auto;
 }
-/* Arkiston hakukentän tyyli */
-.search-bar { padding: 15px; width: 100%; border-radius: 8px; border: 2px solid #38bdf8; background: #0f172a; color: white; margin-bottom: 20px; }
-#result-box { padding: 20px; background: var(--panel2); border: 2px solid var(--green); border-radius: 10px; display: none; }
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1.1rem; /* Tämä suurentaa tekstin luettavaksi */
+    margin: 0;
+    padding: 20px;
+}
 
+.card {
+    background: var(--panel);
+    padding: 25px; /* Enemmän tilaa sisälle */
+    border-radius: 15px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px; /* Kortti on leveä mutta ei liian leveä */
+    margin-left: auto;
+    margin-right: auto; /* Keskiittää kortin */
+}
 </style>
 </head>
 
 <body>
+<div id="notification-box" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #334155; color: white; padding: 20px; border-radius: 10px; border: 2px solid #fff; z-index: 1000; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+    <h3 id="notif-title">Ilmoitus Valtiolta</h3>
+    <p id="notif-text"></p>
+    <button onclick="closeNotification()" style="padding: 10px 20px; background: #3b82f6; border: none; color: white; cursor: pointer; border-radius: 5px;">OK</button>
+</div>
 
 <div class="login-screen" id="loginPage">
 <div class="login-card">
@@ -110,6 +135,9 @@ button{
 <option>Kirjastonhoitaja</option>
 <option>Rajavartija</option>
 <option>Valtio</option>
+<option>VEPOHO-YHTYMÄ</option>
+<option>OSARYHTYMÄ</option>
+
 </select>
 <button onclick="login()">Kirjaudu</button>
 </div>
@@ -123,14 +151,18 @@ button{
 
 <div class="container">
 <div class="sidebar">
+
+
 <div class="menu-item" onclick="show('home')">🏠 Etusivu</div>
+<div class="menu-item" onclick="show('transfer-page')">💸 Omaisuuden siirto</div>
+<div class="menu-item" onclick="show('shopping')">🛒Ostokset</div>
 <div class="menu-item" onclick="show('budget')">📊 Budjetti</div>
 <div class="menu-item" onclick="show('companies')">🏢 Yritykset</div>
 <div class="menu-item" onclick="show('laws')">📜 Lait</div>
 <div class="menu-item" onclick="show('jobs')">💼 Työpaikat</div>
 <div class="menu-item" onclick="show('crisis')">⚠️ Kriisit</div>
-<div class="menu-item" onclick="show('archive')">📂 Arkisto</div>
 <div class="menu-item" onclick="show('puolueet')">🏛️ Puolueet</div>
+<div class="menu-item" onclick="show('admin-panel')">🏛️ VALTIONVALVONTAKESKUS</div>
 </div>
 
 <div class="content">
@@ -140,7 +172,15 @@ button{
         <h2>🏠 Etusivu</h2>
         <p>Tervetuloa Nallundaihin.</p>
     </div>
+<div id="all-notifications" style="margin-bottom: 20px;"></div>
 
+<div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #3b82f6;">
+    <h3>💡 Kehitysideat Valtiolle</h3>
+    <input type="text" id="devSuggestion" placeholder="Kirjoita ideasi tähän..." style="width: 100%; margin-bottom: 10px; color: black;">
+    <button onclick="submitSuggestion()" style="background: #3b82f6; width: 100%; cursor: pointer; color: white; border: none; padding: 10px;">Lähetä ehdotus</button>
+</div>
+
+<div id="suggestion-responses" style="margin-top: 20px;"></div>
     <div class="card">
         <h2>⚠️ Kriisitilanteet</h2>
         <div class="crisis-container">
@@ -163,7 +203,86 @@ button{
         <h1 class="green">20 951 000 €</h1>
     </div>
 </div>
+<div id="transfer-page" class="page">
+    <div style="background: #1e293b; padding: 25px; border-radius: 16px; border: 3px solid #22c55e; max-width: 600px; margin: auto;">
+        <h2 style="color: #22c55e; text-align: center;">💸 OMAISUUDEN SIIRTO</h2>
+        
+        <input type="text" id="transferTo" placeholder="Kenelle (Vastaanottajan nimi)" style="width:100%; margin-bottom:10px; padding:10px;">
+        <input type="text" id="transferAmount" placeholder="Määrä tai omaisuuden nimi" style="width:100%; margin-bottom:10px; padding:10px;">
+        <input type="text" id="transferReason" placeholder="Syy siirrolle" style="width:100%; margin-bottom:10px; padding:10px;">
+        
+        <button onclick="submitTransferRequest()" style="background:#22c55e; width:100%; padding:15px; border:none; border-radius:8px; cursor:pointer; color:white; font-weight:bold;">
+            LÄHETÄ PYYNTÖ VALTIOLLE
+        </button>
+    </div>
 
+    <div id="my-transfer-requests" style="max-width: 600px; margin: 20px auto; color: white;">
+        </div>
+</div>
+<div id="admin-panel" class="page">
+    <div class="card">
+        <h2>🏛️ Valtion valvontakeskus</h2>
+        <button onclick="showAdminPanel()" style="padding: 10px; cursor: pointer;">Päivitä tiedot</button>
+
+        <div id="admin-content" style="display: none; margin-top: 20px;">
+            
+            <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <h3>➕ Lisää tuote kauppaan</h3>
+    <input type="text" id="itemName" placeholder="Tuotteen nimi" style="width: 100%; padding: 8px; margin-bottom: 5px;">
+    <input type="text" id="itemDesc" placeholder="Tuotteen kuvaus" style="width: 100%; padding: 8px; margin-bottom: 5px;">
+    <input type="number" id="itemPrice" placeholder="Hinta (€)" style="width: 100%; padding: 8px; margin-bottom: 5px;">
+    
+    <input type="text" id="itemCategory" placeholder="Kategoria (esim. Luvat, Kirjat...)" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+    
+    <button onclick="addProduct()" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; cursor: pointer;">Lisää tuote</button>
+</div>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #334155;">
+
+            <div id="all-balances"></div>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #334155;">
+
+            <div id="money-request-list" style="margin-bottom: 20px;"></div>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #334155;">
+
+            <div id="requests-section" style="margin-bottom: 20px;">
+                <h3>⏳ Odottavat ostopyynnöt</h3>
+                <div id="request-list"></div>
+            </div>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #334155;">
+
+            <h3>💰 Rahansiirto ja sakotus</h3>
+            <label>Perustelu (pakollinen syy):</label>
+            <input type="text" id="transactionReason" placeholder="Kirjoita syy maksuun tai sakkoon..." style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+
+            <label>Valitse rooli:</label>
+            <select id="targetRole" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                <option value="Pääministeri">Pääministeri</option>
+                <option value="Poliisi">Poliisi</option>
+                <option value="Kierrättäjä">Kierrättäjä</option>
+                <option value="Puolustusministeri">Puolustusministeri</option>
+                <option value="Rajavartija">Rajavartija</option>
+                <option value="Kirjastonhoitaja">Kirjastonhoitaja</option>
+                <option value="Pankkiiri">Pankkiiri</option>
+                <option value="Lääkäri">Lääkäri</option>
+                <option value="Valtio">Valtio</option>
+                <option value="VEPOHO-YHTYMÄ">Vepoho-yhtymä</option>
+                <option value="OSARYHTYMÄ">OSAR YHTYMÄ</option>
+            </select>
+
+            <label>Summa (€):</label>
+            <input type="number" id="globalAmount" placeholder="Syötä summa" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+
+            <div style="display: flex; gap: 10px;">
+                <button onclick="processTransaction(1)" style="flex: 1; padding: 10px; background: #22c55e; color: white; border: none; cursor: pointer; border-radius: 5px;">MAKSA (+)</button>
+                <button onclick="processTransaction(-1)" style="flex: 1; padding: 10px; background: #ef4444; color: white; border: none; cursor: pointer; border-radius: 5px;">SAKOTA (-)</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="crisis" class="page">
     <div class="card">
         <h2>⚠️ Kriisitilanteet</h2>
@@ -185,6 +304,27 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
     </div>
 </div>
 </div>
+<div id="shopping" class="page">
+    <div style="padding: 20px; font-family: sans-serif; background: #0f172a; color: white;">
+        <div style="background: #1e293b; padding: 25px; border-radius: 16px; border: 3px solid #22c55e; max-width: 950px; margin: auto;">
+            <h2 style="color: #22c55e; text-align: center;">🛒 OSTOKSET</h2>
+            <p style="text-align: center; font-size: 2rem;">Saldo: <span id="userBalance" style="color: #facc15;">0</span> €</p>
+            
+            <div style="text-align: center; margin: 20px 0; padding: 15px; background: #0f172a; border-radius: 10px; border: 1px solid #22c55e;">
+                Haluatko ostaa osakkeita? 
+                <a href="https://amateurcoder316.github.io/OSAR/index.html" target="_blank" style="color: #22c55e; font-weight: bold; text-decoration: none;">PAINA TÄSTÄ</a>
+            </div>
+
+            <div style="background: #0f172a; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; color: #cbd5e1; border-left: 4px solid #facc15;">
+                <strong>⚠️ HUOMIO:</strong> Osta-napin painaminen on sitova ostopäätös. 
+                Summa varataan kassastasi, kun Valtio hyväksyy ostopyyntösi.
+            </div>
+            
+            <div id="shop-items-container" style="display: flex; flex-direction: column; gap: 10px;">
+            </div>
+        </div>
+    </div>
+</div>
 <div id="budget" class="page">
     <div id="budget-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px; font-family: sans-serif; background: #0f172a; color: white;">
         
@@ -192,15 +332,15 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
             <h2 style="color: #38bdf8; text-align: center;">📊 VARSINAINEN</h2>
             <h3 style="color: #22c55e; border-bottom: 2px solid #22c55e;">📈 TULOT</h3>
             <ul style="list-style: none; padding: 0; font-size: 0.8em;">
- <li>Olympialaiset 9 000</li><li>Piilotulot 4 000</li><li>Kirjastonhoitaja ATV 15 000</li><li>Poliisi ATV 24 000</li><li>Rajavartija ATV 24 000</li><li>Pankkiiri ATV 24 000</li><li>Lääkäri ATV 37 000</li><li>Kierrättäjä ATV 37 000</li><li>Pääministeri ATV 34 000</li><li>Puolustusministeri ATV 34 000</li><li>Sote-maksu 24 000</li><li>Työttömyysmaksu 24 000</li><li>Pankkimaksu 56 000</li><li>Moniosamaksu 72 000</li><li>Vepoho 76 000</li><li>Yritysvero 28 000  vepoho</li><li>Osaketulot 102 000</li><li>Tapahtumat 35 000</li><li>Lotto </li><li>Omaisuusvero 120 000</li><li>Kirjastotulo 22 000</li><li>Ministereiden omaisuusvero 51 000</li><li>Varastoyritystulot 48 000</li><li>VEPOHO/PANOKSET ALV 9 000</li><li>JÄÄDYTETTYJEN VAROJEN KÄYTTÖÖNOTTO 15000</li><li>Terveyshieronta yritys 17 000 verotulot</li>NERF TURNAUS TULOT  23000</li> <li>PANOSTEN KERÄYS YRITYS YRITYSTULO VERO 2000</li><li>TAPAHTUMA VALVOJA ATV  5000</li><li>OSAKE ATV 11 000</li> <li>KALEVIN MAKSUVALTIOLLE HYVINVOINTIA VARTEN 15 000</li><li>KOULUTTAJA YRTITYKSEN VEROT  16 000</li>
+ <li>Olympialaiset 9 000</li><li>Piilotulot 8 000</li><li>Kirjastonhoitaja ATV 15 000</li><li>Poliisi ATV 24 000</li><li>Rajavartija ATV 24 000</li><li>Pankkiiri ATV 24 000</li><li>Lääkäri ATV 37 000</li><li>Kierrättäjä ATV 37 000</li><li>Pääministeri ATV 34 000</li><li>Puolustusministeri ATV 34 000</li><li>Sote-maksu 24 000</li><li>Työttömyysmaksu 24 000</li><li>Pankkimaksu 56 000</li><li>Moniosamaksu 72 000</li><li>Vepoho 00 000</li><li>Yritysvero 0 000  vepoho</li><li>Osaketulot 0 000</li><li>Tapahtumat 35 000</li><li>Lotto </li><li>Omaisuusvero 120 000</li><li>Kirjastotulo 22 000</li><li>Ministereiden omaisuusvero 51 000</li><li>Varastoyritystulot 48 000</li><li>PANOKSET VEROT 7 000</li><li>JÄÄDYTETTYJEN VAROJEN KÄYTTÖÖNOTTO 15000</li><li>Terveyshieronta yritys 17 000 verotulot</li>NERF TURNAUS TULOT  23000</li> <li>PANOSTEN KERÄYS YRITYS YRITYSTULO VERO 2000</li><li>TAPAHTUMA VALVOJA ATV  5000</li><li>OSAKE ATV 00 000</li> <li>KALEVIN MAKSUVALTIOLLE HYVINVOINTIA VARTEN 15 000</li><li>KOULUTTAJA YRTITYKSEN VEROT  16 000</li> <li> RAPSUNDAI TERVEUDDENHUOLTO OSTO 15 000</li>
             </ul>
 <h3 style="color: #ef4444; border-bottom: 2px solid #ef4444; margin-top: 15px;">📉 MENOT</h3>
             <ul style="list-style: none; padding: 0; font-size: 0.8em;">
-                <li>Kirjastonhoitaja palkka 60 000</li><li>Poliisi palkka 96 000</li><li>Kierrättäjä palkka 120 000</li><li>Rajavartija palkka 96 000</li><li>Lääkäri palkka 120 000</li><li>Pankkiiri osuus 24 000</li><li>Veppoho 280 000</li><li>Pääministeri palkka 108 000</li><li>Puolustusministeri palkka 108 000</li><li>Panosten korjaus 20 000</li></li><li>TERVEYSHIERONTA YRITYS  12 000</li><li>TAPAHTUMIEN VALVONTA JA OSIEN KERÄÄJÄ 20 000</li><li>VALTION KOULUTUSTUKI 45 000</li>
+                <li>Kirjastonhoitaja palkka 60 000</li><li>Poliisi palkka 96 000</li><li>Kierrättäjä palkka 120 000</li><li>Rajavartija palkka 96 000</li><li>Lääkäri palkka 120 000</li><li>Pankkiiri palkka 72 000</li><li>Veppoho0 000</li><li>Pääministeri palkka 108 000</li><li>Puolustusministeri palkka 108 000</li><li>Panosten korjaus 20 000</li></li><li>TERVEYSHIERONTA YRITYS  12 000</li><li>TAPAHTUMIEN VALVONTA JA OSIEN KERÄÄJÄ 20 000</li><li>VALTION KOULUTUSTUKI 45 000</li>
             </ul>
       <div style="margin-top: 30px; padding: 20px; background: #7f1d1d; border-radius: 12px; border: 2px solid #ef4444; text-align: center;">
             <h3 style="margin: 0; color: #fca5a5;">⚠️ ALIJÄÄMÄ</h3>
-            <p style="font-size: 1.8rem; font-weight: bold; margin: 5px 0 0 0;">-95 000 nlr/211000</p>
+            <p style="font-size: 1.8rem; font-weight: bold; margin: 5px 0 0 0;">+7 000 nlr/211000</p>
         </div>
     </div>
 
@@ -261,7 +401,7 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
         text-align: center; /* Keskittää tekstin laatikon sisällä */
     }
     
-    /* Otsikon tekstin koko */
+    
     .company b {
         font-size: 2rem; 
     }
@@ -582,64 +722,4 @@ NDP Laittaa hyvinvoinnin etusijalle ja sen että ihmisillä on varma tulevisuus<
         <div class="party-item">
             <h3>3. VHP</h3>
             <p>🌿 Vihreä Hyvinvointipuolue (VHP) – Osallistumisen ja kestävyyden puolueVihreä Hyvinvointipuolue (VHP) uskoo, että hyvinvointi ja yhteiskunnan vakaus syntyvät siitä, että jokainen kansalainen on aktiivinen osa yhteisöä ja osallistuu yhteiseen toimintaan. Puolueen ydin on siinä, että ihmiset kohtaavat ja jakavat resursseja keskenään.  Yhteisöllinen odotus: VHP:n mukaan kansalaisilla on yhteisöllinen odotus osallistua kaikkiin tapahtumiin. Puolue näkee yhteiset kohtaamiset paikkoina, joissa tieto vaihtuu ja yhteiskunnan rattaat pysyvät liikkeessä, ja siksi jokaisen läsnäolo on arvostettua.  Verotus: Kannustava ja selkeä: VHP ajaa 10 % ansiotuloveroa. Puolue haluaa, että ihmisillä on mahdollisimman paljon rahaa käytettävissä omaan arkeen, mikä mahdollistaa myös vaivattoman osallistumisen yhteiseen toimintaan.  Omaisuuden suoja: VHP vastustaa omaisuusveroa. Puolueen mielestä kerran verotettu omaisuus, kuten tavarat ja koti, kuuluu kansalaiselle eikä sitä tule verottaa uudelleen.  Kiertotalous ja resurssit: Tavaroiden hukkaaminen on moraalinen virhe. Kierrättäjät ovat arvostettuja ammattilaisia, jotka huolehtivat siitä, että resurssit pysyvät kierrossa ja yhteisö kukoistaa.  Terveys ja tieto: Lääkärit ja kirjastonhoitajat varmistavat, että kansalaiset pysyvät toimintakykyisinä ja viisaina, jotta jokainen on kykenevä osallistumaan yhteiskunnan tapahtumiin ja toimintaan. </p>
-        </div>
-    </div>
-</div>
-
-
-<script>
-// 2. Arkiston tiedot
-const archive = {
-    "ODOOIK05": { title: "ODOTTAVAT OIKEUDENKÄYNNIT", text: "ASIA:PÄÄMINISTERIN KAUDELLA 2 TAPAHTUI EPÄILTY PÄÄMINISTERIN LOUKKAUS MYÖHEMMISSÄ SELVITYKSISSÄ ILMENI ETTÄ SEN AJAN PÄÄMINISTERI OLI KÄSKENYT VALEHTELEMAAN POLIISIA ASIALLA TÄSTÄ ASIASTA VELOITETTIIN 50 000 KALEVI PALMULTA , Status: ODOTTAA KÄSITTELYÄ NUMERO 5" },
-    "ODOOIK04": { title: "ODOTTAVATOIKEUDENKÄYNNIT", text: "ASIA:PÄÄMINISTERIN KAUDELLA 2 TAPAHTUI MIELENOSOITUS JA KOKOONTUMINEN JOTA POLIISIT TULIVAT HÄIRITSEMÄÄN ELIAH HALUSI OMIEN SANOJENSA MUKAAN KOKOONTUA KALEVI PALMUN KANSSA TÄSTÄ ASIASTA SAKOTETTIIN 50 000 ELIAH YLITALOLTA , Status: ODOTTAA KÄSITTELYÄ NUMERO 4" },
-    "ODOOIK02": { title: "ODOTTAVAT OIKEUDENKÄYNNIT", text: "ASIA:PÄÄMINISTERIN KAUDELLA 12 TAPAHTUI 2X LUVATONTA RAJANYLITYSTÄ JA 2X LUVATONTA RAJANYLITYSTÄ ILMAN PASSIA ALEKSI OLI TÄLLÖIN PUOLUSTUSMINISTERI, Status: ODOTTAA KÄSITTELYÄ NUMERO 2" },
-    "ODOTERO1": { title: "ODOTTAVAT TYÖPAIKKAEROT", text: "ASIA:KALEVI PALMU HAKEE EROA TEHTÄVÄSTÄÄN SYYSTÄ ETTÄ TILANNE RIISTÄYTYII KÄSISTÄ PUOLUSTUMINISTERIN OSALLA TÖNTEKIJÖIDEN TYÖT SEKOITTUIVAT TOISTENSA KANSSA JA PUOLUSTUSMINISTERIN VALINNAN JÄLKEEN KANSAN TYYTYMÄTTÖMYYS LISÄSI LAKKOA, Status: HYVÄKSYTTY" },
-    "ODOOIK03": { title: "ODOTTAVAT OIKEUDENKÄYNNIT", text: "ASIA:EEMELI SUOMINEN PANKKIIRINA TEKI 3X TOISEN HAAVOITTAMISTA ASEELLA 2X LUVATONTA RAJANYLITYSTÄ 2X RAJAN YLITYSTÄ ASEENN KANSSA KÄYTTI ASETTA JULKISELLA PAIKALLA OSOITTELI ASEELLA JULKISELLA PAIKALLA,Status: EI KIIREINEN ODOTTAA KÄSITTELYÄ NUMERO 3" },
-    "ODOOIK06": { title: "ODOTTAVAT OIKEUDENKÄYNNIT", text: "ASIA:VILIUS LIUKKONEN RIKKOI PANKKIA LEMMY KEMPAKSEN SANOJEN MUKAAN SILLOIN KUN KALEVI PALMU JA MUUT OLIVAT POISSA LAATIKOITA OLI RIKKI JA PÖYTIÄ KAATUNUT TÄSTÄ LEMMY SYYTTI VILIUSTA,Status: KIIREINEN NUMERO 6" }
-}; 
-
-// 1. Kirjautumissalasanat
-const passwords = {
-    "Pääministeri":"7986", "Poliisi":"8234", "Kierrättäjä":"3456",
-    "Puolustusministeri":"9765", "Rajavartija":"9088", "Kirjastonhoitaja":"3537",
-    "Pankkiiri":"8474", "Lääkäri":"9967", "Valtio":"1111"
-};
-
-// 3. Kirjautuminen
-function login(){
-    const selected = document.getElementById("role").value;
-    const pass = document.getElementById("password").value;
-
-    if(passwords[selected] !== pass){
-        alert("Väärä salasana!");
-        return;
-    }
-    document.getElementById("loginPage").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-    show('home');
-}
-
-// 4. Arkistohaku
-function searchArchive() {
-    const input = document.getElementById("mainSearch");
-    const box = document.getElementById("result-box");
-    const title = document.getElementById("result-title");
-    const text = document.getElementById("result-text");
-    const value = input.value.toUpperCase().trim();
-
-    if (archive[value]) {
-        title.textContent = archive[value].title;
-        text.textContent = archive[value].text;
-        box.style.display = "block";
-    } else {
-        box.style.display = "none";
-    }
-}
-
-// 5. Sivun vaihto
-function show(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const page = document.getElementById(pageId);
-    if(page) page.classList.add('active');
-}
-</script>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+<script src="./INDEX.js"></script> 

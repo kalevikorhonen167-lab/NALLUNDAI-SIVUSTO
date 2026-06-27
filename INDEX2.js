@@ -34,7 +34,7 @@ const db = getFirestore(app);
 const passwords = {
     "Pääministeri": "7986", "Poliisi": "8234", "Kierrättäjä": "3456",
     "Puolustusministeri": "9765", "Rajavartija": "9088", "Kirjastonhoitaja": "3537",
-    "Pankkiiri": "8474", "Lääkäri": "9967", "Valtio": "1111",
+    "Pankkiiri": "8474", "Lääkäri": "9967", "Valtio": "2032",
     "VEPOHO-YHTYMÄ": "1234", "OSARYHTYMÄ": "5678"
 };
 
@@ -253,6 +253,65 @@ async function buy(price, name) {
 
     alert("Ostopyyntö lähetetty valtiolle!");
 }
+// ---------------- OSTOTAPAHTUMIEN HALLINTA ----------------
+
+async function approveShopReq(docId) {
+    const reqRef = doc(db, "pendingRequests", docId);
+    const reqSnap = await getDoc(reqRef);
+    if (!reqSnap.exists()) return;
+    const req = reqSnap.data();
+
+    let buyerBal = await getBalance(req.role);
+    let valtioBal = await getBalance("Valtio");
+
+    await setBalance(req.role, buyerBal - parseInt(req.price));
+    await setBalance("Valtio", valtioBal + parseInt(req.price));
+
+    const notifRef = doc(db, "notifications", req.role);
+    const notifSnap = await getDoc(notifRef);
+    let notifs = notifSnap.exists() ? notifSnap.data().list : [];
+    notifs.push("✅ OSTOS HYVÄKSYTTY: " + req.item + " (-" + req.price + "€)");
+    await setDoc(notifRef, { list: notifs }, { merge: true });
+
+    await deleteDoc(reqRef);
+    showAdminPanel();
+}
+
+async function rejectShopReq(docId) {
+    const reqRef = doc(db, "pendingRequests", docId);
+    const reqSnap = await getDoc(reqRef);
+    if (!reqSnap.exists()) return;
+    const req = reqSnap.data();
+
+    const notifRef = doc(db, "notifications", req.role);
+    const notifSnap = await getDoc(notifRef);
+    let notifs = notifSnap.exists() ? notifSnap.data().list : [];
+    notifs.push("❌ OSTOS HYLÄTTY: " + req.item);
+    await setDoc(notifRef, { list: notifs }, { merge: true });
+
+    await deleteDoc(reqRef);
+    showAdminPanel();
+}
+
+async function approveTransfer(docId) {
+    const reqRef = doc(db, "moneyRequests", docId);
+    const reqSnap = await getDoc(reqRef);
+    if (!reqSnap.exists()) return;
+    const req = reqSnap.data();
+
+    let fromBal = await getBalance(req.from);
+    let toBal = await getBalance(req.to);
+
+    await setBalance(req.from, fromBal - parseInt(req.amount));
+    await setBalance(req.to, toBal + parseInt(req.amount));
+
+    await deleteDoc(reqRef);
+    showAdminPanel();
+}
+
+async function rejectTransfer(docId) {
+    await deleteDoc(doc(db, "moneyRequests", docId));
+    showAdminPanel();
 
 // ---------------- TRANSFER ----------------
 

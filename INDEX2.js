@@ -251,7 +251,7 @@ async function buy(price, name) {
         createdAt: Date.now()
     });
 
-    alert("Ostopyyntö lähetetty!");
+    alert("Ostopyyntö lähetetty valtiolle!");
 }
 
 // ---------------- TRANSFER ----------------
@@ -376,6 +376,7 @@ async function renderSuggestions() {
         `;
     });
 }
+// --- TÄRKEÄT WINDOW-SIDOKSET ---
 window.login = login;
 window.show = show;
 window.processTransaction = processTransaction;
@@ -390,3 +391,9 @@ window.showAdminPanel = showAdminPanel;
 window.showNotifications = showNotifications;
 window.submitSuggestion = submitSuggestion;
 window.renderSuggestions = renderSuggestions;
+
+// Lisätyt ostopyyntöjen ja siirtopyyntöjen hallinta:
+window.approveShopReq = approveShopReq;
+window.rejectShopReq = rejectShopReq;
+window.approveTransfer = approveTransfer;
+window.rejectTransfer = rejectTransfer;

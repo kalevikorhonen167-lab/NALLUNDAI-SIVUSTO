@@ -38,15 +38,20 @@ let currentRole = "";
 window.onload = async function () {
     let savedRole = sessionStorage.getItem("loggedInRole");
     let savedPage = sessionStorage.getItem("activePage") || "home";
+    
     if (savedRole) {
         currentRole = savedRole;
+        
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("dashboard").style.display = "block";
+        
         const bal = await getBalance(currentRole);
         document.getElementById("userBalance").textContent = parseInt(bal).toLocaleString("fi-FI");
+        
         show(savedPage);
         showNotifications();
         renderSuggestions();
+        renderLaws(); // <--- LISÄTTY: Lait latautuvat heti sisäänkirjautumisen jälkeen
     }
 };
 
@@ -75,8 +80,13 @@ function show(pageId) {
     sessionStorage.setItem("activePage", pageId);
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     document.getElementById(pageId).classList.add("active");
+    
+    // Tässä nykyiset rivisi:
     if (pageId === "shopping") renderShop();
     if (pageId === "admin-panel") showAdminPanel();
+    
+    // LISÄÄ TÄMÄ RIVI:
+    if (pageId === "laws") renderLaws();
 }
 
 // ---------------- TRANSAKTIOT ----------------
@@ -328,6 +338,36 @@ window.deleteSuggestion = async function(id) {
     await deleteDoc(doc(db, "devSuggestions", id));
     renderSuggestions();
 };
+async function addLaw() {
+    if (currentRole !== "Valtio") return alert("Vain Valtio voi lisätä lakeja!");
+    const text = document.getElementById("lawText").value;
+    if (!text) return alert("Kirjoita laki ensin!");
+    await addDoc(collection(db, "laws"), { text: text, createdAt: Date.now() });
+    alert("Laki julkaistu!");
+    document.getElementById("lawText").value = "";
+    renderLaws();
+}
+
+async function renderLaws() {
+    const container = document.getElementById("laws-container");
+    if (!container) return;
+    const snap = await getDocs(collection(db, "laws"));
+    container.innerHTML = "<h4>Voimassa olevat lait:</h4>";
+    snap.docs.forEach(d => {
+        const l = d.data();
+        container.innerHTML += `
+            <div style="background: #2d3748; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 5px solid #ecc94b;">
+                <p style="margin:0;">${l.text}</p>
+                ${currentRole === "Valtio" ? `<button onclick="deleteLaw('${d.id}')" style="margin-top: 10px; background: #c53030; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Poista laki</button>` : ""}
+            </div>`;
+    });
+}
+
+window.deleteLaw = async function(id) {
+    if (!confirm("Haluatko varmasti poistaa tämän lain?")) return;
+    await deleteDoc(doc(db, "laws", id));
+    renderLaws();
+};
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;
@@ -347,3 +387,5 @@ window.approveShopReq = approveShopReq;
 window.rejectShopReq = rejectShopReq;
 window.approveTransfer = approveTransfer;
 window.rejectTransfer = rejectTransfer;
+window.addLaw = addLaw;
+window.renderLaws = renderLaws;

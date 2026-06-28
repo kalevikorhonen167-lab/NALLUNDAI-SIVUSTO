@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, updateDoc, deleteDoc,  onSnapshot } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 // ---------------- FIREBASE ----------------
 const firebaseConfig = {
@@ -55,36 +55,17 @@ window.onload = async function () {
     }
 };
 
-// ---------------- BALANCE ---------------
-async function getUserDoc(role) {
-    const ref = doc(db, "users", role);
-    return await getDoc(ref);
-}
-
-// Eurojen saldo
+// ---------------- BALANCE ----------------
 async function getBalance(role) {
-    const snap = await getUserDoc(role);
-    // Käytetään ?? (nullish coalescing) operaattoria, joka on tyylikkäämpi
-    return snap.exists() ? (snap.data().balance ?? 0) : (defaultBalances[role] ?? 0);
+    const ref = doc(db, "users", role);
+    const snap = await getDoc(ref);
+    return snap.exists() ? snap.data().balance : defaultBalances[role];
 }
 
 async function setBalance(role, amount) {
     await setDoc(doc(db, "users", role), { balance: amount }, { merge: true });
 }
 
-// Digikolikot
-async function getCoins(role) {
-    const snap = await getUserDoc(role);
-    if (!snap.exists()) return role === "Valtio" ? 245 : 0;
-    
-    const coins = snap.data().coins;
-    return coins !== undefined ? coins : (role === "Valtio" ? 245 : 0);
-}
-
-// TÄMÄ PUUTTUI: Kolikoiden tallennus
-async function setCoins(role, amount) {
-    await setDoc(doc(db, "users", role), { coins: amount }, { merge: true });
-}
 // ---------------- LOGIN ----------------
 function login() {
     const role = document.getElementById("role").value;
@@ -100,9 +81,11 @@ function show(pageId) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     document.getElementById(pageId).classList.add("active");
     
- 
+    // Tässä nykyiset rivisi:
     if (pageId === "shopping") renderShop();
     if (pageId === "admin-panel") showAdminPanel();
+    
+    // LISÄÄ TÄMÄ RIVI:
     if (pageId === "laws") renderLaws();
 }
 
@@ -139,7 +122,7 @@ async function addProduct() {
 }
 
 async function renderShop() {
-    const container = document.getElementById("shop-items-container"); 
+    const container = document.getElementById("shop-items-container");
     if (!container) return;
     const snap = await getDocs(collection(db, "shopItems"));
     const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -194,101 +177,38 @@ async function buy(price, name) {
     alert("Ostopyyntö lähetetty valtiolle!");
 }
 
-   
-    
-    // Haetaan pörssihinta
-    const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
- // Tarkistetaan ensin, löytyykö snapshot ja onko se olemassa
-if (hintaSnap && hintaSnap.exists()) {
-    const pörssihinta = hintaSnap.data().currentPrice;
-    console.log("Pörssihinta ladattu:", pörssihinta);
-} else {
-    console.warn("Virhe: hintaSnap on tyhjä tai dokumenttia ei löytynyt.");
-  
-    const pörssihinta = 0; 
-}
-    // Haetaan kaikki käyttäjät
-    const usersSnap = await getDocs(collection(db, "users"));
-    usersSnap.forEach((uDoc) => {
-        const u = uDoc.data();
-        const sellerRole = uDoc.id;
-        
-        // Näytetään pelaajat joilla on kolikoita, mutta ei Valtiota eikä itseäsi
-        if (sellerRole !== currentRole && sellerRole !== "Valtio" && u.coins > 0) {
-            container.innerHTML += `
-                <div style="background:#1e293b; padding:10px; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between;">
-                    <span>${sellerRole} (${u.coins} kpl)</span>
-                    <button onclick="buyCoinFromPlayer('${sellerRole}', ${pörssihinta})">Osta (${pörssihinta}€)</button>
-                </div>`;
-        }
-    });
 // ---------------- OSTOTAPAHTUMIEN HALLINTA ----------------
-window.approveShopReq = async function(docId) {
+async function approveShopReq(docId) {
     const reqRef = doc(db, "pendingRequests", docId);
     const reqSnap = await getDoc(reqRef);
     if (!reqSnap.exists()) return;
     const req = reqSnap.data();
-
-    if (req.type === 'buy_coin') {
-        // --- KOLIKKOKAUPPA (P2P) ---
-        let bCoins = await getCoins(req.buyer);
-        let sCoins = await getCoins(req.seller);
-        let bBal = await getBalance(req.buyer);
-        let sBal = await getBalance(req.seller);
-
-        await setCoins(req.buyer, bCoins + 1);
-        await setCoins(req.seller, sCoins - 1);
-        await setBalance(req.buyer, bBal - req.price);
-        await setBalance(req.seller, sBal + req.price);
-        
-        await updatePriceLogic('buy');
-        alert("Kolikkokauppa hyväksytty!");
-        
-    } else {
-        // --- VALTION TUOTEKAUPPA ---
-        let buyerBal = await getBalance(req.role);
-        let valtioBal = await getBalance("Valtio");
-        await setBalance(req.role, buyerBal - parseInt(req.price));
-        await setBalance("Valtio", valtioBal + parseInt(req.price));
-
-        const notifRef = doc(db, "notifications", req.role);
-        const notifSnap = await getDoc(notifRef);
-        let notifs = notifSnap.exists() ? notifSnap.data().list : [];
-        notifs.push("✅ OSTOS HYVÄKSYTTY: " + req.item + " (-" + req.price + "€)");
-        await setDoc(notifRef, { list: notifs }, { merge: true });
-    }
-
+    let buyerBal = await getBalance(req.role);
+    let valtioBal = await getBalance("Valtio");
+    await setBalance(req.role, buyerBal - parseInt(req.price));
+    await setBalance("Valtio", valtioBal + parseInt(req.price));
+    const notifRef = doc(db, "notifications", req.role);
+    const notifSnap = await getDoc(notifRef);
+    let notifs = notifSnap.exists() ? notifSnap.data().list : [];
+    notifs.push("✅ OSTOS HYVÄKSYTTY: " + req.item + " (-" + req.price + "€)");
+    await setDoc(notifRef, { list: notifs }, { merge: true });
     await deleteDoc(reqRef);
     showAdminPanel();
-};
+}
 
-window.rejectShopReq = async function(docId) {
+async function rejectShopReq(docId) {
     const reqRef = doc(db, "pendingRequests", docId);
     const reqSnap = await getDoc(reqRef);
     if (!reqSnap.exists()) return;
     const req = reqSnap.data();
-
-    if (req.type === 'buy_coin') {
-        // --- KOLIKKOKAUPPA (Pelaajalta pelaajalle) ---
-        // Jos hylätään kolikkokauppa, voidaan lähettää ilmoitus ostajalle
-        const notifRef = doc(db, "notifications", req.buyer);
-        const notifSnap = await getDoc(notifRef);
-        let notifs = notifSnap.exists() ? notifSnap.data().list : [];
-        notifs.push("❌ KOLIKKOKAUPPA HYLÄTTY: Myyjä perui kaupan.");
-        await setDoc(notifRef, { list: notifs }, { merge: true });
-        
-    } else {
-        // --- PERINTEINEN VALTION KAUPPA ---
-        const notifRef = doc(db, "notifications", req.role);
-        const notifSnap = await getDoc(notifRef);
-        let notifs = notifSnap.exists() ? notifSnap.data().list : [];
-        notifs.push("❌ OSTOS HYLÄTTY: " + req.item);
-        await setDoc(notifRef, { list: notifs }, { merge: true });
-    }
-
+    const notifRef = doc(db, "notifications", req.role);
+    const notifSnap = await getDoc(notifRef);
+    let notifs = notifSnap.exists() ? notifSnap.data().list : [];
+    notifs.push("❌ OSTOS HYLÄTTY: " + req.item);
+    await setDoc(notifRef, { list: notifs }, { merge: true });
     await deleteDoc(reqRef);
-    showAdminPanel(); // Päivittää listan näkymästä
-};
+    showAdminPanel();
+}
 
 async function approveTransfer(docId) {
     const reqRef = doc(db, "moneyRequests", docId);
@@ -319,56 +239,30 @@ async function submitTransferRequest() {
 
 // ---------------- ADMIN PANEL ----------------
 async function showAdminPanel() {
-    // Poistettiin "Valtio-only" rajoitus, jotta myyjät näkevät omat kauppansa
+    if (currentRole !== "Valtio") return;
     document.getElementById("admin-content").style.display = "block";
-    
-    // Saldot näytetään vain Valtiolle (tai jos haluat, voit poistaa tämän rajoituksen)
-    if (currentRole === "Valtio") {
-        const balC = document.getElementById("all-balances");
-        balC.innerHTML = "<h3>Saldot:</h3>";
-        for (let r in passwords) {
-            const b = await getBalance(r);
-            balC.innerHTML += `<div>${r}: ${b.toLocaleString()}€</div>`;
-        }
-        
-        const trans = await getDocs(collection(db, "moneyRequests"));
-        const transC = document.getElementById("money-request-list");
-        transC.innerHTML = "<h4>Siirtopyynnöt</h4>";
-        trans.docs.forEach(d => {
-            const r = d.data();
-            transC.innerHTML += `<div>${r.from} → ${r.to}: ${r.amount}€ <button onclick="approveTransfer('${d.id}')">✅</button><button onclick="rejectTransfer('${d.id}')">❌</button></div>`;
-        });
+    const balC = document.getElementById("all-balances");
+    balC.innerHTML = "<h3>Saldot:</h3>";
+    for (let r in passwords) {
+        const b = await getBalance(r);
+        balC.innerHTML += `<div>${r}: ${b.toLocaleString()}€</div>`;
     }
-
-    // --- OSTOPYYNNÖT (Kaikki näkevät omansa) ---
+    const trans = await getDocs(collection(db, "moneyRequests"));
+    const transC = document.getElementById("money-request-list");
+    transC.innerHTML = "<h4>Siirtopyynnöt</h4>";
+    trans.docs.forEach(d => {
+        const r = d.data();
+        transC.innerHTML += `<div>${r.from} → ${r.to}: ${r.amount}€ <button onclick="approveTransfer('${d.id}')">✅</button><button onclick="rejectTransfer('${d.id}')">❌</button></div>`;
+    });
     const shop = await getDocs(collection(db, "pendingRequests"));
     const shopC = document.getElementById("request-list");
     shopC.innerHTML = "<h4>Ostopyynnöt</h4>";
-    
     shop.docs.forEach(d => {
         const r = d.data();
-        
-        // Näytetään vain:
-        // 1. Valtiolle kaikki
-        // 2. Myyjälle ne, joissa hän on myyjänä (kolikkokauppa)
-        // 3. Valtiolle ne, joissa on "role" (perinteinen kauppa)
-        const isMySale = (r.seller === currentRole);
-        const isValtioSale = (currentRole === "Valtio" && r.role);
-        
-        if (isMySale || isValtioSale) {
-            const displayLabel = r.type === 'buy_coin' ? 
-                `Digikolikko (Myyjä: ${r.seller})` : 
-                `${r.role}: ${r.item}`;
-                
-            shopC.innerHTML += `
-                <div>
-                    ${displayLabel} (${r.price}€) 
-                    <button onclick="approveShopReq('${d.id}')">✅</button>
-                    <button onclick="rejectShopReq('${d.id}')">❌</button>
-                </div>`;
-        }
+        shopC.innerHTML += `<div>${r.role}: ${r.item} (${r.price}€) <button onclick="approveShopReq('${d.id}')">✅</button><button onclick="rejectShopReq('${d.id}')">❌</button></div>`;
     });
 }
+
 // ---------------- NOTIFICATIONS ----------------
 async function showNotifications() {
     const container = document.getElementById("all-notifications");
@@ -475,97 +369,50 @@ window.deleteLaw = async function(id) {
     renderLaws();
 };
 // ---------------- DIGIKOLIKKO-GRAAFI ----------------
-let digikolikkoChart;
+const ctx = document.getElementById('digikolikkoChart').getContext('2d');
+const digikolikkoChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Alku'], 
+        datasets: [{
+            label: 'Digikolikko (€)',
+            data: [500], // Lähtöhinta 500 €
+            borderColor: '#22c55e',
+            backgroundColor: 'rgba(34, 197, 94, 0.2)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
 
-window.initDigikolikkoChart = function() {
-    const canvas = document.getElementById('digikolikkoChart');
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    digikolikkoChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Alku'], 
-            datasets: [{
-                label: 'Digikolikko (€)',
-                data: [500],
-                borderColor: '#22c55e',
-                backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                fill: true,
-                tension: 0.3
-            }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-};
-
+// Päivitetty funktio graafille
 window.updateDigikolikkoPrice = function(newPrice) {
-    if (!digikolikkoChart) return;
-    
     const dataSet = digikolikkoChart.data.datasets[0].data;
+    
+    // Pyöristetään luku kokonaisluvuksi graafia varten
     const roundedPrice = Math.round(newPrice);
 
+    // Estetään turhat tuplapäivitykset
     if (dataSet[dataSet.length - 1] === roundedPrice) return;
 
     dataSet.push(roundedPrice);
     digikolikkoChart.data.labels.push(''); 
-    
-    if (dataSet.length > 20) {
-        dataSet.shift();
-        digikolikkoChart.data.labels.shift();
-    }
-    
     digikolikkoChart.update();
 };
 
-// 1. TÄMÄ FUNKTIO HOITAA HINNANMUUTOKSEN PROSENTTEINA
-window.updatePriceLogic = async function(type) { // type: 'buy' tai 'sell'
-    const hintaRef = doc(db, "digikolikko", "hintaData");
-    const hintaSnap = await getDoc(hintaRef);
-    let current = hintaSnap.data().currentPrice;
-    
-    // Osto (+9%) tai Myynti (-8%)
-    let multiplier = (type === 'buy') ? 1.09 : 0.92;
-    let newPrice = Math.round(current * multiplier);
-    
-    await setDoc(hintaRef, { currentPrice: newPrice }, { merge: true });
-};
-
-// 2. MANUAALINEN PÄIVITYS
-window.manuallyUpdatePrice = async function() {
-    const input = document.getElementById("adminManualPrice");
-    const newPrice = parseInt(input.value);
-    if (isNaN(newPrice)) return alert("Syötä kelvollinen numero!");
-
-    await setDoc(doc(db, "digikolikko", "hintaData"), { currentPrice: newPrice }, { merge: true });
-    alert("Pörssikurssi päivitetty: " + newPrice + "€");
-    input.value = ""; 
-};
-
-// 3. VAHTIKOIRA
+// Vahtikoira: päivittää hinnan aina kun se muuttuu Firebasessa
 onSnapshot(doc(db, "digikolikko", "hintaData"), (doc) => {
     if (doc.exists()) {
         const data = doc.data();
         if (data.currentPrice !== undefined) {
-            if (!digikolikkoChart) window.initDigikolikkoChart();
             updateDigikolikkoPrice(data.currentPrice);
         }
     }
 });
-window.buyCoinFromPlayer = async function(sellerRole, price) {
-    const bal = await getBalance(currentRole);
-    if (bal < price) return alert("Ei tarpeeksi rahaa!");
-
-    await addDoc(collection(db, "pendingRequests"), { 
-        buyer: currentRole, 
-        seller: sellerRole, 
-        price: price, 
-        type: 'buy_coin',
-        status: 'pending',
-        createdAt: Date.now() 
-    });
-    alert("Ostopyyntö lähetetty pelaajalle: " + sellerRole);
-};
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;
@@ -588,4 +435,5 @@ window.rejectTransfer = rejectTransfer;
 window.addLaw = addLaw;
 window.renderLaws = renderLaws;
 window.deleteLaw = deleteLaw;
+window.updatePriceAfterTrade = updatePriceAfterTrade;
 window.updateDigikolikkoPrice = updateDigikolikkoPrice;

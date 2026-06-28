@@ -193,8 +193,8 @@ async function buy(price, name) {
     await addDoc(collection(db, "pendingRequests"), { role: currentRole, item: name, price: price, createdAt: Date.now() });
     alert("Ostopyyntö lähetetty valtiolle!");
 }
-// --- LISÄÄ TÄMÄ renderShop-funktioon loppuun ---
-    container.innerHTML += "<hr><h3>Osta digikolikoita pelaajilta</h3>";
+
+   
     
     // Haetaan pörssihinta
     const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));

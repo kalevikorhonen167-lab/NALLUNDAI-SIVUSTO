@@ -267,21 +267,58 @@ async function showNotifications() {
 async function submitSuggestion() {
     const text = document.getElementById("devSuggestion").value;
     if (!text) return alert("Kirjoita idea!");
-    await addDoc(collection(db, "devSuggestions"), { from: currentRole, text, reply: "" });
+    // Lisätään tyhjä vastaus ja rooli tietokantaan
+    await addDoc(collection(db, "devSuggestions"), { 
+        from: currentRole, 
+        text: text, 
+        reply: "" 
+    });
     alert("Lähetetty!");
+    document.getElementById("devSuggestion").value = "";
+    renderSuggestions();
 }
 
 async function renderSuggestions() {
     const container = document.getElementById("suggestion-responses");
     if (!container) return;
+    
     const snap = await getDocs(collection(db, "devSuggestions"));
-    container.innerHTML = "<h4>Ideat</h4>";
+    container.innerHTML = "<h4>Ideat ja vastaukset:</h4>";
+    
     snap.docs.forEach(d => {
         const s = d.data();
-        container.innerHTML += `<div style="padding:10px; margin:10px;"><b>${s.from}</b>: ${s.text} ${s.reply ? `<p>${s.reply}</p>` : ""}</div>`;
+        const id = d.id;
+        let isAdmin = (currentRole === "Valtio");
+
+        container.innerHTML += `
+        <div style="background: #2d3748; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+            <p><strong>${s.from}</strong>: ${s.text}</p>
+            ${s.reply ? `<p style="color: #3b82f6;"><em>Valtion vastaus: ${s.reply}</em></p>` : ""}
+            
+            ${isAdmin ? `
+                <div id="admin-tools-${id}">
+                    <input type="text" id="reply-input-${id}" placeholder="Vastaus..." style="color:black;">
+                    <button onclick="sendReply('${id}')">Lähetä</button>
+                    <button onclick="deleteSuggestion('${id}')" style="background: red; color: white;">Poista</button>
+                </div>
+            ` : ""}
+        </div>`;
     });
 }
 
+// Apufunktiot vastauksille ja poistolle
+window.sendReply = async function(id) {
+    let replyText = document.getElementById(`reply-input-${id}`).value;
+    if (!replyText) return alert("Kirjoita vastaus!");
+    await updateDoc(doc(db, "devSuggestions", id), { reply: replyText });
+    renderSuggestions();
+};
+
+window.deleteSuggestion = async function(id) {
+    if (!confirm("Poistetaanko idea?")) return;
+    await deleteDoc(doc(db, "devSuggestions", id));
+    renderSuggestions();
+};
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;

@@ -389,3 +389,4 @@ window.approveTransfer = approveTransfer;
 window.rejectTransfer = rejectTransfer;
 window.addLaw = addLaw;
 window.renderLaws = renderLaws;
+window.deleteLaw = deleteLaw;

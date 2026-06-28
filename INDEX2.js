@@ -368,7 +368,52 @@ window.deleteLaw = async function(id) {
     await deleteDoc(doc(db, "laws", id));
     renderLaws();
 };
-// ---------------- WINDOW-SIDOKSET ----------------
+// ---------------- DIGIKOLIKKO-GRAAFI ----------------
+const ctx = document.getElementById('digikolikkoChart').getContext('2d');
+const digikolikkoChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Alku'], 
+        datasets: [{
+            label: 'Digikolikko (€)',
+            data: [500], // Lähtöhinta 500 €
+            borderColor: '#22c55e',
+            backgroundColor: 'rgba(34, 197, 94, 0.2)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// Päivitetty funktio graafille
+window.updateDigikolikkoPrice = function(newPrice) {
+    const dataSet = digikolikkoChart.data.datasets[0].data;
+    
+    // Pyöristetään luku kokonaisluvuksi graafia varten
+    const roundedPrice = Math.round(newPrice);
+
+    // Estetään turhat tuplapäivitykset
+    if (dataSet[dataSet.length - 1] === roundedPrice) return;
+
+    dataSet.push(roundedPrice);
+    digikolikkoChart.data.labels.push(''); 
+    digikolikkoChart.update();
+};
+
+// Vahtikoira: päivittää hinnan aina kun se muuttuu Firebasessa
+onSnapshot(doc(db, "digikolikko", "hintaData"), (doc) => {
+    if (doc.exists()) {
+        const data = doc.data();
+        if (data.currentPrice !== undefined) {
+            updateDigikolikkoPrice(data.currentPrice);
+        }
+    }
+});
+--------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;
 window.processTransaction = processTransaction;
@@ -390,3 +435,5 @@ window.rejectTransfer = rejectTransfer;
 window.addLaw = addLaw;
 window.renderLaws = renderLaws;
 window.deleteLaw = deleteLaw;
+window.updatePriceAfterTrade = updatePriceAfterTrade;
+window.updateDigikolikkoPrice = updateDigikolikkoPrice;

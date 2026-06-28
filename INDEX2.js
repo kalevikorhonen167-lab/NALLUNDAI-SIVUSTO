@@ -413,7 +413,7 @@ onSnapshot(doc(db, "digikolikko", "hintaData"), (doc) => {
         }
     }
 });
---------------- WINDOW-SIDOKSET ----------------
+// ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;
 window.processTransaction = processTransaction;

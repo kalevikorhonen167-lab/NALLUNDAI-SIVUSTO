@@ -198,8 +198,15 @@ async function buy(price, name) {
     
     // Haetaan pörssihinta
     const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+ // Tarkistetaan ensin, löytyykö snapshot ja onko se olemassa
+if (hintaSnap && hintaSnap.exists()) {
     const pörssihinta = hintaSnap.data().currentPrice;
-    
+    console.log("Pörssihinta ladattu:", pörssihinta);
+} else {
+    console.warn("Virhe: hintaSnap on tyhjä tai dokumenttia ei löytynyt.");
+  
+    const pörssihinta = 0; 
+}
     // Haetaan kaikki käyttäjät
     const usersSnap = await getDocs(collection(db, "users"));
     usersSnap.forEach((uDoc) => {

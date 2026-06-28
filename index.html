@@ -3,115 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NALLUNDAI</title>
+    <title>NALLUNDAI-VePoHo</title>
   
-<style>
-:root{
-    --bg:#0a0f1f;
-    --panel:#121a2f;
-    --panel2:#18233f;
-    --green:#22c55e;
-    --text:#fff;
-}
-
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
-body{background:var(--bg);color:var(--text);}
-
-.login-screen{
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.login-card{
-    width:420px;
-    background:var(--panel);
-    padding:30px;
-    border-radius:15px;
-}
-
-input,select{
-    width:100%;
-    padding:12px;
-    margin-bottom:10px;
-    border-radius:8px;
-    border:none;
-    background:var(--panel2);
-    color:white;
-}
-
-button{
-    padding:10px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    background:var(--green);
-    color:white;
-}
-
-#dashboard{display:none;}
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    padding:15px;
-    background:#0f1730;
-}
-
-.container{display:flex;}
-
-.sidebar{
-    width:260px;
-    min-height:100vh;
-    background:#10182d;
-    padding:20px;
-}
-
-.menu-item{
-    padding:12px;
-    background:var(--panel);
-    margin-bottom:10px;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-.page{display:none;}
-.page.active{display:block;}
-
-.content{flex:1;padding:20px;}
-
-.card {
-    background: var(--panel);
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 15px;
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    /* Nämä varmistavat, ettei kortti ole liian pieni: */
-    width: 95%;           /* Käyttää 95% näytön leveydestä */
-    max-width: 500px;     /* Ei veny liian suureksi pöytäkoneella */
-    margin-left: auto;    /* Keskiittää kortin */
-    margin-right: auto;
-}
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-size: 1.1rem; /* Tämä suurentaa tekstin luettavaksi */
-    margin: 0;
-    padding: 20px;
-}
+    <style>
+        :root{
+            --bg:#0a0f1f;
+            --panel:#121a2f;
+            --panel2:#18233f;
+            --green:#22c55e;
+            --text:#fff;
+        }
 
-.card {
-    background: var(--panel);
-    padding: 25px; /* Enemmän tilaa sisälle */
-    border-radius: 15px;
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 500px; /* Kortti on leveä mutta ei liian leveä */
-    margin-left: auto;
-    margin-right: auto; /* Keskiittää kortin */
-}
-</style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+        body{background:var(--bg);color:var(--text);}
+
+        .login-screen{
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .login-card{
+            width:420px;
+            background:var(--panel);
+            padding:30px;
+            border-radius:15px;
+        }
+
+        input,select{
+            width:100%;
+            padding:12px;
+            margin-bottom:10px;
+            border-radius:8px;
+            border:none;
+            background:var(--panel2);
+            color:white;
+        }
+
+        button{
+            padding:10px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            background:var(--green);
+            color:white;
+        }
+
+        #dashboard{display:none;}
+
+        .topbar{
+            display:flex;
+            justify-content:space-between;
+            padding:15px;
+            background:#0f1730;
+        }
+
+        .container{display:flex;}
+
+        .sidebar{
+            width:260px;
+            min-height:100vh;
+            background:#10182d;
+            padding:20px;
+        }
+
+        .menu-item{
+            padding:12px;
+            background:var(--panel);
+            margin-bottom:10px;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        .page{display:none;}
+        .page.active{display:block;}
+
+        .content{flex:1;padding:20px;}
+
+        .card {
+            background: var(--panel);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            width: 95%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1.1rem;
+            margin: 0;
+            padding: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -258,6 +248,13 @@ body {
     <input type="text" id="lawText" placeholder="Kirjoita laki tähän..." style="width: 100%; padding: 10px; margin-bottom: 10px; color: black; border-radius: 5px;">
     <button onclick="addLaw()" style="width: 100%; padding: 10px; background: #ecc94b; color: black; font-weight: bold; border: none; cursor: pointer; border-radius: 5px;">Julkaise laki</button>
 </div>
+<hr style="margin: 20px 0; border: 0; border-top: 1px solid #334155;">
+
+<div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #22c55e; margin-bottom: 20px;">
+    <h3>📈 Digikolikon hinnanohjaus</h3>
+    <input type="number" id="manualPrice" placeholder="Aseta uusi hinta (€)" style="width: 100%; padding: 10px; margin-bottom: 10px; color: black; border-radius: 5px;">
+    <button onclick="setDigikolikkoPrice()" style="width: 100%; padding: 10px; background: #22c55e; color: white; font-weight: bold; border: none; cursor: pointer; border-radius: 5px;">PÄIVITÄ PÖRSSIKURSSI</button>
+</div>
 
             <hr style="margin: 20px 0; border: 0; border-top: 1px solid #334155;">
 
@@ -317,6 +314,10 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
             <h2 style="color: #22c55e; text-align: center;">🛒 OSTOKSET</h2>
             <p style="text-align: center; font-size: 2rem;">Saldo: <span id="userBalance" style="color: #facc15;">0</span> €</p>
             
+            <div style="margin: 20px 0; background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #22c55e;">
+                <h3 style="text-align: center; color: #22c55e; margin-bottom: 10px;">Digikolikon kurssi</h3>
+                <canvas id="digikolikkoChart" style="max-height: 200px; width: 100%;"></canvas>
+            </div>
             <div style="text-align: center; margin: 20px 0; padding: 15px; background: #0f172a; border-radius: 10px; border: 1px solid #22c55e;">
                 Haluatko ostaa osakkeita? 
                 <a href="https://amateurcoder316.github.io/OSAR/index.html" target="_blank" style="color: #22c55e; font-weight: bold; text-decoration: none;">PAINA TÄSTÄ</a>

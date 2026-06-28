@@ -277,7 +277,6 @@ window.clearNotification = async function(index) {
     await setDoc(ref, { list: msgs }, { merge: true });
     showNotifications();
 };
-}
 
 async function submitSuggestion() {
     const text = document.getElementById("devSuggestion").value;

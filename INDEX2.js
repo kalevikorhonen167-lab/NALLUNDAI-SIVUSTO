@@ -581,5 +581,4 @@ window.rejectTransfer = rejectTransfer;
 window.addLaw = addLaw;
 window.renderLaws = renderLaws;
 window.deleteLaw = deleteLaw;
-window.updatePriceAfterTrade = updatePriceAfterTrade;
 window.updateDigikolikkoPrice = updateDigikolikkoPrice;

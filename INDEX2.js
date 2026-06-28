@@ -56,7 +56,6 @@ window.onload = async function () {
 };
 
 // ---------------- BALANCE ---------------
-// Apuohjelma: Hakee käyttäjän dokumentin kerran, ettei sitä tarvitse hakea useasti
 async function getUserDoc(role) {
     const ref = doc(db, "users", role);
     return await getDoc(ref);
@@ -140,7 +139,7 @@ async function addProduct() {
 }
 
 async function renderShop() {
-    const container = document.getElementById("shop-items-container");
+    const container = document.getElementById("shop-items-container"); 
     if (!container) return;
     const snap = await getDocs(collection(db, "shopItems"));
     const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));

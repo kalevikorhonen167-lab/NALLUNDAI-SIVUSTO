@@ -253,30 +253,25 @@ async function showAdminPanel() {
     });
 }
 
-// ---------------- NOTIFICATIONS & SUGGESTIONS ----------------
+// ---------------- NOTIFICATIONS ----------------
 async function showNotifications() {
     const container = document.getElementById("all-notifications");
     if (!container) return;
+    
     const ref = doc(db, "notifications", currentRole);
     const snap = await getDoc(ref);
     const msgs = snap.exists() ? snap.data().list : [];
+    
     container.innerHTML = "<h4>Ilmoitukset:</h4>";
-    msgs.forEach((m, i) => {
+    
+    // Listataan vain viestit ilman OK-nappia
+    msgs.forEach((m) => { 
         container.innerHTML += `
             <div style="background:#1e293b; padding:10px; margin:5px; border-radius:5px;">
-                ${m} <button onclick="clearNotification(${i})">OK</button>
-            </div>`;
+                ${m}
+            </div>`; 
     });
 }
-
-window.clearNotification = async function(index) {
-    const ref = doc(db, "notifications", currentRole);
-    const snap = await getDoc(ref);
-    let msgs = snap.data().list;
-    msgs.splice(index, 1);
-    await setDoc(ref, { list: msgs }, { merge: true });
-    showNotifications();
-};
 
 async function submitSuggestion() {
     const text = document.getElementById("devSuggestion").value;

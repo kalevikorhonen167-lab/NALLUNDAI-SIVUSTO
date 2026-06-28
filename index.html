@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NALLUNDAI</title>
+    <title>NALLUNDAI-VePoHo</title>
+  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root{
@@ -113,22 +115,23 @@
 <div class="login-card">
 <h2>🏛️ NALLUNDAI</h2>
 <input id="password" type="password" placeholder="Salasana">
+<select id="role">
+<option>Pääministeri</option>
+<option>Puolustusministeri</option>
+<option>Pankkiiri</option>
+<option>Poliisi</option>
+<option>Lääkäri</option>
+<option>Kierrättäjä</option>
+<option>Kirjastonhoitaja</option>
+<option>Rajavartija</option>
+<option>Valtio</option>
+<option>VEPOHO-YHTYMÄ</option>
+<option>OSARYHTYMÄ</option>
 
-<select id="role" aria-label="Valitse käyttäjärooli">
-    <option>Pääministeri</option>
-    <option>Puolustusministeri</option>
-    <option>Pankkiiri</option>
-    <option>Poliisi</option>
-    <option>Lääkäri</option>
-    <option>Kierrättäjä</option>
-    <option>Kirjastonhoitaja</option>
-    <option>Rajavartija</option>
-    <option>Valtio</option>
-    <option>VEPOHO-YHTYMÄ</option>
-    <option>OSARYHTYMÄ</option>
 </select>
-
 <button onclick="login()">Kirjaudu</button>
+</div>
+</div>
 
 <div id="dashboard">
 <div class="topbar">
@@ -309,16 +312,24 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
     <div style="padding: 20px; font-family: sans-serif; background: #0f172a; color: white;">
         <div style="background: #1e293b; padding: 25px; border-radius: 16px; border: 3px solid #22c55e; max-width: 950px; margin: auto;">
             <h2 style="color: #22c55e; text-align: center;">🛒 OSTOKSET</h2>
-            <p style="text-align: center; font-size: 1.5rem;">Saldo: <span id="userBalance" style="color: #facc15;">0</span> €</p>
-            <p style="text-align: center; font-size: 1.5rem;">Kolikot: <span id="userCoins" style="color: #22c55e;">0</span> kpl</p>
+            <p style="text-align: center; font-size: 2rem;">Saldo: <span id="userBalance" style="color: #facc15;">0</span> €</p>
             
             <div style="margin: 20px 0; background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #22c55e;">
                 <h3 style="text-align: center; color: #22c55e; margin-bottom: 10px;">Digikolikon kurssi</h3>
                 <canvas id="digikolikkoChart" style="max-height: 200px; width: 100%;"></canvas>
             </div>
+            <div style="text-align: center; margin: 20px 0; padding: 15px; background: #0f172a; border-radius: 10px; border: 1px solid #22c55e;">
+                Haluatko ostaa osakkeita? 
+                <a href="https://amateurcoder316.github.io/OSAR/index.html" target="_blank" style="color: #22c55e; font-weight: bold; text-decoration: none;">PAINA TÄSTÄ</a>
+            </div>
+
+            <div style="background: #0f172a; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; color: #cbd5e1; border-left: 4px solid #facc15;">
+                <strong>⚠️ HUOMIO:</strong> Osta-napin painaminen on sitova ostopäätös. 
+                Summa varataan kassastasi, kun Valtio hyväksyy ostopyyntösi.
+            </div>
             
             <div id="shop-items-container" style="display: flex; flex-direction: column; gap: 10px;">
-                </div>
+            </div>
         </div>
     </div>
 </div>

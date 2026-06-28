@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/fireba
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-// ---------------- FIREBASE ----------------
+// ---------------- FIREBASE KONFIGURAATIO ----------------
 const firebaseConfig = {
     apiKey: "AIzaSyCzjkcQFSYlJw-BKS7RatdXdCAxkh_9O9U",
     authDomain: "nallundaifirebase.firebaseapp.com",
@@ -34,7 +34,7 @@ const defaultBalances = {
 
 let currentRole = "";
 
-// ---------------- INIT ----------------
+// ---------------- ALUSTUS ----------------
 window.onload = async function () {
     let savedRole = sessionStorage.getItem("loggedInRole");
     let savedPage = sessionStorage.getItem("activePage") || "home";
@@ -251,6 +251,18 @@ async function showAdminPanel() {
         const r = d.data();
         shopC.innerHTML += `<div>${r.role}: ${r.item} (${r.price}€) <button onclick="approveShopReq('${d.id}')">✅</button><button onclick="rejectShopReq('${d.id}')">❌</button></div>`;
     });
+
+    const suggSnap = await getDocs(collection(db, "devSuggestions"));
+    const suggC = document.getElementById("admin-suggestion-list");
+    if(suggC) {
+        suggC.innerHTML = "<h4>Ideat</h4>";
+        suggSnap.docs.forEach(d => {
+            const s = d.data();
+            if(s.status === "pending") {
+                suggC.innerHTML += `<div><b>${s.from}</b>: ${s.text} <button onclick="respondToSuggestion('${d.id}')">Vastaa</button></div>`;
+            }
+        });
+    }
 }
 
 // ---------------- NOTIFICATIONS & SUGGESTIONS ----------------
@@ -267,8 +279,17 @@ async function showNotifications() {
 async function submitSuggestion() {
     const text = document.getElementById("devSuggestion").value;
     if (!text) return alert("Kirjoita idea!");
-    await addDoc(collection(db, "devSuggestions"), { from: currentRole, text, reply: "" });
+    await addDoc(collection(db, "devSuggestions"), { from: currentRole, text, reply: "", status: "pending" });
     alert("Lähetetty!");
+    document.getElementById("devSuggestion").value = "";
+    renderSuggestions();
+}
+
+async function respondToSuggestion(id) {
+    const reply = prompt("Kirjoita vastaus:");
+    if (!reply) return;
+    await updateDoc(doc(db, "devSuggestions", id), { reply: reply, status: "replied" });
+    showAdminPanel();
 }
 
 async function renderSuggestions() {
@@ -278,8 +299,20 @@ async function renderSuggestions() {
     container.innerHTML = "<h4>Ideat</h4>";
     snap.docs.forEach(d => {
         const s = d.data();
-        container.innerHTML += `<div style="padding:10px; margin:10px;"><b>${s.from}</b>: ${s.text} ${s.reply ? `<p>${s.reply}</p>` : ""}</div>`;
+        if (s.status === "replied" && s.from === currentRole) {
+            container.innerHTML += `
+                <div style="padding:10px; margin:10px; border:1px solid #444;">
+                    <b>Idea:</b> ${s.text}<br>
+                    <b style="color:lightgreen;">Vastaus:</b> ${s.reply}
+                    <button onclick="deleteSuggestion('${d.id}')">OK</button>
+                </div>`;
+        }
     });
+}
+
+async function deleteSuggestion(id) {
+    await deleteDoc(doc(db, "devSuggestions", id));
+    renderSuggestions();
 }
 
 // ---------------- WINDOW-SIDOKSET ----------------
@@ -301,3 +334,5 @@ window.approveShopReq = approveShopReq;
 window.rejectShopReq = rejectShopReq;
 window.approveTransfer = approveTransfer;
 window.rejectTransfer = rejectTransfer;
+window.respondToSuggestion = respondToSuggestion;
+window.deleteSuggestion = deleteSuggestion;

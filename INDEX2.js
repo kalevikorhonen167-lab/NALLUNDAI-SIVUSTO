@@ -135,13 +135,15 @@ async function renderShop() {
     const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     container.innerHTML = "";
     const cats = [...new Set(items.map(i => i.category))];
+    
     cats.forEach(cat => {
         const filtered = items.filter(i => i.category === cat);
         if (filtered.length) {
             container.innerHTML += `<h3>${cat}</h3>`;
             filtered.forEach(item => {
+                // Lisätty punainen reunus, jos item.isSoldOut on true
                 container.innerHTML += `
-                    <div style="padding:10px; margin:10px; background:#1e293b;">
+                    <div style="padding:10px; margin:10px; background:#1e293b; ${item.isSoldOut ? 'border: 2px solid red;' : ''}">
                         <strong>${item.name}</strong> - ${item.price}€
                         <p>${item.desc}</p>
                         <button onclick="${item.isSoldOut ? '' : `buy('${item.price}','${item.name}')`}">${item.isSoldOut ? "LOPPUUNMYYTY" : "Osta"}</button>
@@ -155,7 +157,6 @@ async function renderShop() {
         }
     });
 }
-
 async function toggleSoldOut(id) {
     const ref = doc(db, "shopItems", id);
     const snap = await getDoc(ref);

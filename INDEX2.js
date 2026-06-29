@@ -261,34 +261,14 @@ async function showAdminPanel() {
         const r = d.data();
         transC.innerHTML += `<div>${r.from} → ${r.to}: ${r.amount}€ <button onclick="approveTransfer('${d.id}')">✅</button><button onclick="rejectTransfer('${d.id}')">❌</button></div>`;
     });
-   window.renderShop = async function() {
     const shop = await getDocs(collection(db, "pendingRequests"));
     const shopC = document.getElementById("request-list");
-    
-    // Haetaan pörssin hinta tietokannasta, jotta se näkyy listan yhteydessä
-    const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
-    const currentPrice = hintaSnap.exists() ? hintaSnap.data().currentPrice : 0;
-
-    shopC.innerHTML = `
-        <h4>Ostopyynnöt</h4>
-        <div style="margin-bottom: 15px; color: #22c55e; font-weight: bold;">
-            Nykyinen pörssikurssi: ${currentPrice.toLocaleString("fi-FI")} €
-        </div>
-    `;
-
+    shopC.innerHTML = "<h4>Ostopyynnöt</h4>";
     shop.docs.forEach(d => {
         const r = d.data();
-        // Varmistetaan hinnan esitysmuoto (jos price on numero tai teksti)
-        const price = parseFloat(r.price) || 0;
-        
-        shopC.innerHTML += `
-            <div style="margin-bottom: 5px; border-bottom: 1px solid #334155; padding-bottom: 5px;">
-                ${r.role}: ${r.item} (${price.toLocaleString("fi-FI")} €) 
-                <button onclick="approveShopReq('${d.id}')">✅</button>
-                <button onclick="rejectShopReq('${d.id}')">❌</button>
-            </div>`;
+        shopC.innerHTML += `<div>${r.role}: ${r.item} (${r.price}€) <button onclick="approveShopReq('${d.id}')">✅</button><button onclick="rejectShopReq('${d.id}')">❌</button></div>`;
     });
-};
+}
 window.setDigikolikkoPrice = async function() {
     const newPrice = parseInt(document.getElementById("manualPrice").value);
     if (isNaN(newPrice)) return alert("Syötä kelvollinen numero!");

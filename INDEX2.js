@@ -387,26 +387,49 @@ window.deleteLaw = async function(id) {
     renderLaws();
 };
 // ---------------- DIGIKOLIKKO-GRAAFI ----------------
-const ctx = document.getElementById('digikolikkoChart').getContext('2d');
-const digikolikkoChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['Alku'], 
-        datasets: [{
-            label: 'Digikolikko (€)',
-            data: [500], // Lähtöhinta 500 €
-            borderColor: '#22c55e',
-            backgroundColor: 'rgba(34, 197, 94, 0.2)',
-            fill: true,
-            tension: 0.3
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false
-    }
-});
+const canvasElement = document.getElementById('digikolikkoChart');
+let digikolikkoChart = null;
 
+if (canvasElement) {
+    digikolikkoChart = new Chart(canvasElement.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: ['Alku'], 
+            datasets: [{
+                label: 'Digikolikko (€)',
+                data: [500], 
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+// --- Graafin päivityslogiikka (max 20 pistettä) ---
+async function updateChart(newPrice) {
+    if (digikolikkoChart) {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        
+        // Lisätään uusi tieto
+        digikolikkoChart.data.labels.push(time);
+        digikolikkoChart.data.datasets[0].data.push(newPrice);
+        
+        // Pidetään vain 20 viimeisintä pistettä
+        if (digikolikkoChart.data.labels.length > 20) {
+            digikolikkoChart.data.labels.shift();
+            digikolikkoChart.data.datasets[0].data.shift();
+        }
+        
+        // Päivitetään näkymä
+        digikolikkoChart.update();
+    }
+}
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;
@@ -430,3 +453,4 @@ window.addLaw = addLaw;
 window.renderLaws = renderLaws;
 window.deleteLaw = deleteLaw;
 window.setDigikolikkoPrice = setDigikolikkoPrice;
+window.updateChart = updateChart;

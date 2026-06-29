@@ -34,8 +34,10 @@ const defaultBalances = {
 
 let currentRole = "";
 
-// ---------------- INIT ----------------
 window.onload = async function () {
+    // 1. Alusta graafi aina latauksessa (jos canvas löytyy)
+    initChart(); 
+
     let savedRole = sessionStorage.getItem("loggedInRole");
     let savedPage = sessionStorage.getItem("activePage") || "home";
     
@@ -51,7 +53,21 @@ window.onload = async function () {
         show(savedPage);
         showNotifications();
         renderSuggestions();
-        renderLaws(); // <--- LISÄTTY: Lait latautuvat heti sisäänkirjautumisen jälkeen
+        renderLaws(); 
+
+        // 2. Hae tallennettu hinta tietokannasta ja päivitä graafiin
+        const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+        if (hintaSnap.exists()) {
+            const hinta = hintaSnap.data().currentPrice;
+            if(document.getElementById("current-coin-price")) {
+                document.getElementById("current-coin-price").innerText = hinta;
+            }
+            // Asetetaan graafin arvot vastaamaan haettua hintaa
+            if (digikolikkoChart) {
+                digikolikkoChart.data.datasets[0].data = Array(20).fill(hinta);
+                digikolikkoChart.update();
+            }
+        }
     }
 };
 // Hakee hinnan tietokannasta heti sivun latautuessa
@@ -387,27 +403,44 @@ window.deleteLaw = async function(id) {
     renderLaws();
 };
 // ---------------- DIGIKOLIKKO-GRAAFI ----------------
+let digikolikkoChart; 
+
 function initChart() {
     const canvas = document.getElementById('digikolikkoChart');
-    if (!canvas) return; 
+    if (!canvas) return;
 
     digikolikkoChart = new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
-            labels: ['Alku'],
+            // Luo 20 kpl tyhjiä kohtia ja 500 arvon pisteitä
+            labels: Array(20).fill("Alku"),
             datasets: [{
                 label: 'Digikolikko (€)',
-                data: [500],
+                data: Array(20).fill(500), 
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.2)',
                 fill: true,
-                tension: 0.3
+                tension: 0
             }]
         },
         options: { responsive: true, maintainAspectRatio: false }
     });
 }
 
+async function updateChart(newPrice) {
+    if (digikolikkoChart) {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        // Poista vanhin ja lisää uusi hinta
+        digikolikkoChart.data.labels.shift();
+        digikolikkoChart.data.datasets[0].data.shift();
+        
+        digikolikkoChart.data.labels.push(time);
+        digikolikkoChart.data.datasets[0].data.push(newPrice);
+        
+        digikolikkoChart.update();
+    }
+}
 async function updateChart(newPrice) {
     if (digikolikkoChart) {
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });

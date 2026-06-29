@@ -54,6 +54,13 @@ window.onload = async function () {
         renderLaws(); // <--- LISÄTTY: Lait latautuvat heti sisäänkirjautumisen jälkeen
     }
 };
+// Hakee hinnan tietokannasta heti sivun latautuessa
+    const priceSnap = await getDoc(doc(db, "config", "digikolikko"));
+    if (priceSnap.exists()) {
+        const savedPrice = priceSnap.data().price;
+        currentDigikolikkoPrice = savedPrice;
+        document.getElementById("displayPrice").innerText = savedPrice.toFixed(2);
+    }
 
 // ---------------- BALANCE ----------------
 async function getBalance(role) {
@@ -389,30 +396,31 @@ const digikolikkoChart = new Chart(ctx, {
     }
 });
 
-// Päivitetty funktio graafille
-window.updateDigikolikkoPrice = function(newPrice) {
-    const dataSet = digikolikkoChart.data.datasets[0].data;
-    
-    // Pyöristetään luku kokonaisluvuksi graafia varten
-    const roundedPrice = Math.round(newPrice);
+// Asetetaan alkuperäinen hinta muuttujaan
+let currentDigikolikkoPrice = 500; 
 
-    // Estetään turhat tuplapäivitykset
-    if (dataSet[dataSet.length - 1] === roundedPrice) return;
+async function updateDigikolikkoPrice() {
+    const inputVal = parseFloat(document.getElementById("manualPrice").value);
+    if (isNaN(inputVal)) return alert("Syötä numero!");
 
-    dataSet.push(roundedPrice);
-    digikolikkoChart.data.labels.push(''); 
-    digikolikkoChart.update();
-};
+    const display = document.getElementById("displayPrice");
 
-// Vahtikoira: päivittää hinnan aina kun se muuttuu Firebasessa
-onSnapshot(doc(db, "digikolikko", "hintaData"), (doc) => {
-    if (doc.exists()) {
-        const data = doc.data();
-        if (data.currentPrice !== undefined) {
-            updateDigikolikkoPrice(data.currentPrice);
-        }
+    // Verrataan uutta hintaa edelliseen
+    if (inputVal > currentDigikolikkoPrice) {
+        display.style.color = "#22c55e"; // Vihreä
+    } else if (inputVal < currentDigikolikkoPrice) {
+        display.style.color = "#ef4444"; // Punainen
+    } else {
+        display.style.color = "white";
     }
-});
+
+    // Päivitetään näkymä ja muuttuja
+    display.innerText = inputVal.toFixed(2);
+    currentDigikolikkoPrice = inputVal;
+
+    // TALLENNUS FIRESTOREEN (Valinnainen, mutta suositeltava)
+    await setDoc(doc(db, "config", "digikolikko"), { price: inputVal });
+}
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;
@@ -435,5 +443,4 @@ window.rejectTransfer = rejectTransfer;
 window.addLaw = addLaw;
 window.renderLaws = renderLaws;
 window.deleteLaw = deleteLaw;
-window.updatePriceAfterTrade = updatePriceAfterTrade;
 window.updateDigikolikkoPrice = updateDigikolikkoPrice;

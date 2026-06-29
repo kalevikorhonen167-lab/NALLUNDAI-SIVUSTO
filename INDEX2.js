@@ -55,13 +55,13 @@ window.onload = async function () {
     }
 };
 // Hakee hinnan tietokannasta heti sivun latautuessa
-    const priceSnap = await getDoc(doc(db, "config", "digikolikko"));
-    if (priceSnap.exists()) {
-        const savedPrice = priceSnap.data().price;
-        currentDigikolikkoPrice = savedPrice;
-        document.getElementById("displayPrice").innerText = savedPrice.toFixed(2);
-    }
-
+const priceSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+if (priceSnap.exists()) {
+    const savedPrice = priceSnap.data().currentPrice;
+    const priceDisplay = document.getElementById("current-coin-price");
+    if (priceDisplay) priceDisplay.innerText = savedPrice;
+}
+ 
 // ---------------- BALANCE ----------------
 async function getBalance(role) {
     const ref = doc(db, "users", role);
@@ -269,7 +269,18 @@ async function showAdminPanel() {
         shopC.innerHTML += `<div>${r.role}: ${r.item} (${r.price}€) <button onclick="approveShopReq('${d.id}')">✅</button><button onclick="rejectShopReq('${d.id}')">❌</button></div>`;
     });
 }
-
+window.setDigikolikkoPrice = async function() {
+    const newPrice = parseInt(document.getElementById("manualPrice").value);
+    if (isNaN(newPrice)) return alert("Syötä kelvollinen numero!");
+    
+    await setDoc(doc(db, "digikolikko", "hintaData"), { currentPrice: newPrice }, { merge: true });
+    
+    // Päivitetään hinta näytölle heti
+    const priceDisplay = document.getElementById("current-coin-price");
+    if (priceDisplay) priceDisplay.innerText = newPrice;
+    
+    alert("Pörssikurssi päivitetty: " + newPrice + " €");
+};
 // ---------------- NOTIFICATIONS ----------------
 async function showNotifications() {
     const container = document.getElementById("all-notifications");
@@ -396,31 +407,6 @@ const digikolikkoChart = new Chart(ctx, {
     }
 });
 
-// Asetetaan alkuperäinen hinta muuttujaan
-let currentDigikolikkoPrice = 500; 
-
-async function updateDigikolikkoPrice() {
-    const inputVal = parseFloat(document.getElementById("manualPrice").value);
-    if (isNaN(inputVal)) return alert("Syötä numero!");
-
-    const display = document.getElementById("displayPrice");
-
-    // Verrataan uutta hintaa edelliseen
-    if (inputVal > currentDigikolikkoPrice) {
-        display.style.color = "#22c55e"; // Vihreä
-    } else if (inputVal < currentDigikolikkoPrice) {
-        display.style.color = "#ef4444"; // Punainen
-    } else {
-        display.style.color = "white";
-    }
-
-    // Päivitetään näkymä ja muuttuja
-    display.innerText = inputVal.toFixed(2);
-    currentDigikolikkoPrice = inputVal;
-
-    // TALLENNUS FIRESTOREEN (Valinnainen, mutta suositeltava)
-    await setDoc(doc(db, "config", "digikolikko"), { price: inputVal });
-}
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;
@@ -443,4 +429,4 @@ window.rejectTransfer = rejectTransfer;
 window.addLaw = addLaw;
 window.renderLaws = renderLaws;
 window.deleteLaw = deleteLaw;
-window.updateDigikolikkoPrice = updateDigikolikkoPrice;
+window.setDigikolikkoPrice = setDigikolikkoPrice;

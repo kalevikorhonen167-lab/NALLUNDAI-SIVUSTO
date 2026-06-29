@@ -185,22 +185,47 @@ async function buy(price, name) {
 }
 
 // ---------------- OSTOTAPAHTUMIEN HALLINTA ----------------
+
 async function approveShopReq(docId) {
     const reqRef = doc(db, "pendingRequests", docId);
     const reqSnap = await getDoc(reqRef);
     if (!reqSnap.exists()) return;
     const req = reqSnap.data();
+    const price = parseInt(req.price);
+
+    // 1. Lasketaan hinnan nousu (1000€ = +0.1%, 10 000€ = +1%)
+    const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+    let currentPrice = hintaSnap.exists() ? hintaSnap.data().currentPrice : 500;
+    
+    // Kaava: jokainen 1000€ tuo 0.001 (0.1%) lisäyksen
+    const increaseFactor = (price / 1000) * 0.001;
+    const newPrice = Math.round(currentPrice * (1 + increaseFactor));
+
+    // 2. Päivitetään uusi hinta tietokantaan
+    await setDoc(doc(db, "digikolikko", "hintaData"), { currentPrice: newPrice }, { merge: true });
+
+    // 3. Suoritetaan rahansiirto
     let buyerBal = await getBalance(req.role);
     let valtioBal = await getBalance("Valtio");
-    await setBalance(req.role, buyerBal - parseInt(req.price));
-    await setBalance("Valtio", valtioBal + parseInt(req.price));
+    await setBalance(req.role, buyerBal - price);
+    await setBalance("Valtio", valtioBal + price);
+
+    // 4. Päivitetään ilmoitus (sisältää tiedon uudesta hinnasta)
     const notifRef = doc(db, "notifications", req.role);
     const notifSnap = await getDoc(notifRef);
     let notifs = notifSnap.exists() ? notifSnap.data().list : [];
-    notifs.push("✅ OSTOS HYVÄKSYTTY: " + req.item + " (-" + req.price + "€)");
+    notifs.push(`✅ OSTOS HYVÄKSYTTY: ${req.item} (-${price}€). Digikolikon uusi hinta: ${newPrice}€`);
     await setDoc(notifRef, { list: notifs }, { merge: true });
+
     await deleteDoc(reqRef);
+    
+    // 5. Päivitetään näkymä
     showAdminPanel();
+    
+    // Päivitetään myös pörssigraafi, jos se on ladattu
+    if (typeof updateChart === 'function') {
+        updateChart(newPrice);
+    }
 }
 
 async function rejectShopReq(docId) {
@@ -248,12 +273,16 @@ async function submitTransferRequest() {
 async function showAdminPanel() {
     if (currentRole !== "Valtio") return;
     document.getElementById("admin-content").style.display = "block";
+    
+    // Saldot
     const balC = document.getElementById("all-balances");
     balC.innerHTML = "<h3>Saldot:</h3>";
     for (let r in passwords) {
         const b = await getBalance(r);
         balC.innerHTML += `<div>${r}: ${b.toLocaleString()}€</div>`;
     }
+    
+    // Siirtopyynnöt
     const trans = await getDocs(collection(db, "moneyRequests"));
     const transC = document.getElementById("money-request-list");
     transC.innerHTML = "<h4>Siirtopyynnöt</h4>";
@@ -261,14 +290,33 @@ async function showAdminPanel() {
         const r = d.data();
         transC.innerHTML += `<div>${r.from} → ${r.to}: ${r.amount}€ <button onclick="approveTransfer('${d.id}')">✅</button><button onclick="rejectTransfer('${d.id}')">❌</button></div>`;
     });
+    
+    // Ostopyynnöt ja pörssikurssin näyttö
     const shop = await getDocs(collection(db, "pendingRequests"));
     const shopC = document.getElementById("request-list");
-    shopC.innerHTML = "<h4>Ostopyynnöt</h4>";
+    
+    const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+    const currentPrice = hintaSnap.exists() ? hintaSnap.data().currentPrice : 500;
+
+    shopC.innerHTML = `
+        <h4>Ostopyynnöt</h4>
+        <div style="margin-bottom: 10px; color: #22c55e; font-weight: bold;">
+            Nykyinen pörssikurssi: ${currentPrice.toLocaleString("fi-FI")} €
+        </div>
+    `;
+    
     shop.docs.forEach(d => {
         const r = d.data();
-        shopC.innerHTML += `<div>${r.role}: ${r.item} (${r.price}€) <button onclick="approveShopReq('${d.id}')">✅</button><button onclick="rejectShopReq('${d.id}')">❌</button></div>`;
+        const price = parseFloat(r.price) || 0;
+        shopC.innerHTML += `
+            <div style="margin-bottom: 5px; border-bottom: 1px solid #334155; padding-bottom: 5px;">
+                ${r.role}: ${r.item} (${price.toLocaleString("fi-FI")} €) 
+                <button onclick="approveShopReq('${d.id}')">✅</button>
+                <button onclick="rejectShopReq('${d.id}')">❌</button>
+            </div>`;
     });
 }
+
 window.setDigikolikkoPrice = async function() {
     const newPrice = parseInt(document.getElementById("manualPrice").value);
     if (isNaN(newPrice)) return alert("Syötä kelvollinen numero!");

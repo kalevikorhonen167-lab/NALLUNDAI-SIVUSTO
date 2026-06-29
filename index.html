@@ -315,14 +315,9 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
             <p style="text-align: center; font-size: 2rem;">Saldo: <span id="userBalance" style="color: #facc15;">0</span> €</p>
             
             <div style="margin: 20px 0; background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #22c55e;">
-                <h3 style="text-align: center; color: #22c55e; margin-bottom: 10px;">Digikolikon kurssi</h3>
-                
-                <div style="text-align: center; margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #334155;">
-                    <p style="margin: 0 0 10px 0;">Digikolikko kpl arvo: <span id="displayPrice" style="color: #22c55e; font-weight: bold; font-size: 1.2rem;">0.00</span> €</p>
-                    <input type="number" id="manualPrice" placeholder="Uusi hinta (€)" style="padding: 8px; border-radius: 5px; border: none; width: 120px;">
-                    <button onclick="setDigikolikkoPrice()" style="padding: 8px 15px; background: #22c55e; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">PÄIVITÄ</button>
-                </div>
-
+                <h3 style="text-align: center; color: #22c55e; margin-bottom: 10px;">
+                    Digikolikon kurssi: <span id="current-coin-price" style="color: white;">--</span> €
+                </h3>
                 <canvas id="digikolikkoChart" style="max-height: 200px; width: 100%;"></canvas>
             </div>
 

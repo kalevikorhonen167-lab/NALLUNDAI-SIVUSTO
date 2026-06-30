@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NALLUNDAI-VePoHo</title>
   
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root{
@@ -111,7 +111,6 @@
     <button onclick="closeNotification()" style="padding: 10px 20px; background: #3b82f6; border: none; color: white; cursor: pointer; border-radius: 5px;">OK</button>
 </div>
 
-
 <div class="login-screen" id="loginPage">
 <div class="login-card">
 <h2>🏛️ NALLUNDAI</h2>
@@ -154,7 +153,6 @@
 <div class="menu-item" onclick="show('crisis')">⚠️ Kriisit</div>
 <div class="menu-item" onclick="show('puolueet')">🏛️ Puolueet</div>
 <div class="menu-item" onclick="show('admin-panel')">🏛️ VALTIONVALVONTAKESKUS</div>
-<div class="menu-item" onclick="show('code-redeem')">🎟️ Lunasta koodi</div>
 </div>
 
 <div class="content">
@@ -189,26 +187,10 @@
         <p>Pääministeri: KALEVI PALMU(NDP)</p>
         <p>Puolustusministeri: ELIAH YLITALO (NDP)</p>
     </div>
-    <div class="card">
-    <h2>💰 Oma saldo</h2>
-    <h1 class="green" id="userBalance">0</h1>
-</div>
+    
     <div class="card">
         <h2>💰 Kassa</h2>
         <h1 class="green">20 951 000 €</h1>
-    </div>
-</div>
-<div id="code-redeem" class="page">
-    <div class="card">
-        <h2>🎟️ Lunasta kolikkokoodi</h2>
-        <p style="margin-bottom: 15px;">Syötä valtion jakama koodi alle:</p>
-        
-        <input type="text" id="coinCodeInput" placeholder="Koodi..." style="width: 100%; padding: 10px; margin-bottom: 10px; color: black; border-radius: 5px;">
-        <button onclick="redeemCoinCode()" style="width: 100%; padding: 10px; background: #22c55e; color: white; border: none; cursor: pointer; border-radius: 5px;">
-            Lunasta
-        </button>
-        
-        <div id="codeFeedback" style="margin-top: 15px; font-weight: bold; text-align: center;"></div>
     </div>
 </div>
 <div id="transfer-page" class="page">
@@ -270,7 +252,7 @@
 
 <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #22c55e; margin-bottom: 20px;">
     <h3>📈 Digikolikon hinnanohjaus</h3>
-    <input type="number" id="manualPrice" placeholder="Aseta uusi hinta (€)" style="width: 100%; padding: 20px; margin-bottom: 29px; color: black; border-radius: 10px;">
+    <input type="number" id="manualPrice" placeholder="Aseta uusi hinta (€)" style="width: 100%; padding: 10px; margin-bottom: 10px; color: black; border-radius: 5px;">
     <button onclick="setDigikolikkoPrice()" style="width: 100%; padding: 10px; background: #22c55e; color: white; font-weight: bold; border: none; cursor: pointer; border-radius: 5px;">PÄIVITÄ PÖRSSIKURSSI</button>
 </div>
 
@@ -335,7 +317,8 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
             <div style="margin: 20px 0; background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #22c55e;">
                 <h3 style="text-align: center; color: #22c55e; margin-bottom: 10px;">
                     Digikolikon kurssi: <span id="current-coin-price" style="color: white;">--</span> €
-             
+                </h3>
+                <canvas id="digikolikkoChart" style="max-height: 200px; width: 100%;"></canvas>
             </div>
 
             <div style="text-align: center; margin: 20px 0; padding: 15px; background: #0f172a; border-radius: 10px; border: 1px solid #22c55e;">
@@ -352,12 +335,6 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
             </div>
         </div>
     </div>
-</div>
-<div class="admin-section">
-    <h3>Luo uusi kolikkokoodi</h3>
-    <input type="text" id="newCodeId" placeholder="Koodi (esim. BONUS50)">
-    <input type="number" id="newCodeAmount" placeholder="Kolikoiden määrä">
-    <button onclick="createCoinCode()">Luo koodi</button>
 </div>
 <div id="budget" class="page">
     <div id="budget-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px; font-family: sans-serif; background: #0f172a; color: white;">

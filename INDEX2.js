@@ -36,31 +36,43 @@ let currentRole = "";
 
 // ---------------- INIT ----------------
 window.onload = async function () {
+    // 1. Haetaan istunnon tila
     let savedRole = sessionStorage.getItem("loggedInRole");
     let savedPage = sessionStorage.getItem("activePage") || "home";
     
     if (savedRole) {
+        // Käyttäjä on kirjautunut – nyt vasta haetaan dataa
         currentRole = savedRole;
         
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("dashboard").style.display = "block";
         
+        // HAETAAN HINTA VAIN KIRJAUTUNEENA
+        try {
+            const priceSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+            if (priceSnap.exists()) {
+                const savedPrice = priceSnap.data().currentPrice;
+                const priceDisplay = document.getElementById("current-coin-price");
+                if (priceDisplay) priceDisplay.innerText = savedPrice;
+            }
+        } catch (e) {
+            console.error("Hinnan haku epäonnistui:", e);
+        }
+        
+        // HAETAAN MUU DATA
         const bal = await getBalance(currentRole);
         document.getElementById("userBalance").textContent = parseInt(bal).toLocaleString("fi-FI");
         
         show(savedPage);
         showNotifications();
         renderSuggestions();
-        renderLaws(); // <--- LISÄTTY: Lait latautuvat heti sisäänkirjautumisen jälkeen
+        renderLaws();
+    } else {
+        // Jos ei kirjautunut, näytetään vain kirjautumissivu
+        document.getElementById("loginPage").style.display = "flex";
+        document.getElementById("dashboard").style.display = "none";
     }
 };
-// Hakee hinnan tietokannasta heti sivun latautuessa
-const priceSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
-if (priceSnap.exists()) {
-    const savedPrice = priceSnap.data().currentPrice;
-    const priceDisplay = document.getElementById("current-coin-price");
-    if (priceDisplay) priceDisplay.innerText = savedPrice;
-}
  
 // ---------------- BALANCE ----------------
 async function getBalance(role) {

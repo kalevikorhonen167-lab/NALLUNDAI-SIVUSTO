@@ -500,6 +500,68 @@ async function deleteNotification(index) {
     // Päivitetään näkymä välittömästi
     showNotifications();
 }
+/ 2. Päivitetty createCoinCode (siistitty ja lisätty palautteet)
+async function createCoinCode() {
+    const codeId = document.getElementById("newCodeId").value.trim().toUpperCase();
+    const amount = parseInt(document.getElementById("newCodeAmount").value);
+
+    if (!codeId || isNaN(amount) || amount <= 0) {
+        return alert("Virheelliset tiedot! Syötä koodi ja positiivinen summa.");
+    }
+
+    try {
+        await setDoc(doc(db, "coinCodes", codeId), { amount: amount });
+        alert(`Koodi ${codeId} luotu! Arvo: ${amount} kolikkoa.`);
+        // Tyhjennetään kentät luonnin jälkeen
+        document.getElementById("newCodeId").value = "";
+        document.getElementById("newCodeAmount").value = "";
+    } catch (error) {
+        console.error("Virhe koodin luonnissa:", error);
+        alert("Koodin luonti epäonnistui.");
+    }
+}
+
+async function redeemCoinCode() {
+    const codeInput = document.getElementById("coinCodeInput");
+    const code = codeInput.value.trim().toUpperCase();
+    const feedback = document.getElementById("codeFeedback");
+
+    if (!code) {
+        feedback.textContent = "Syötä koodi!";
+        feedback.style.color = "orange";
+        return;
+    }
+
+    try {
+        const codeRef = doc(db, "coinCodes", code);
+        const codeSnap = await getDoc(codeRef);
+
+        if (codeSnap.exists()) {
+            const amount = codeSnap.data().amount;
+            const userRef = doc(db, "users", currentRole);
+            
+            // Haetaan nykyinen saldo ja päivitetään se
+            const userSnap = await getDoc(userRef);
+            let currentBalance = userSnap.exists() ? (userSnap.data().balance || 0) : 0;
+            let newBalance = currentBalance + amount;
+
+            await updateDoc(userRef, { balance: newBalance });
+            await deleteDoc(codeRef); // Poistetaan koodi käytön jälkeen
+
+            feedback.textContent = `✅ Lunastettu! Sait ${amount} kolikkoa.`;
+            feedback.style.color = "var(--green)";
+            document.getElementById("userBalance").textContent = newBalance.toLocaleString("fi-FI");
+            codeInput.value = ""; // Tyhjennetään kenttä
+        } else {
+            feedback.textContent = "❌ Koodi on virheellinen tai jo käytetty!";
+            feedback.style.color = "red";
+        }
+    } catch (error) {
+        console.error("Virhe lunastuksessa:", error);
+        feedback.textContent = "Yhteysvirhe. Yritä uudelleen.";
+        feedback.style.color = "red";
+    }
+}
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;
@@ -525,3 +587,8 @@ window.deleteLaw = deleteLaw;
 window.setDigikolikkoPrice = setDigikolikkoPrice;
 window.updateChart = updateChart;
 window.deleteNotification = deleteNotification;
+window.createCoinCode = createCoinCode;
+window.redeemCoinCode = redeemCoinCode;
+window.deleteNotification = deleteNotification;
+window.createCoinCode = createCoinCode;
+window.redeemCoinCode = redeemCoinCode;

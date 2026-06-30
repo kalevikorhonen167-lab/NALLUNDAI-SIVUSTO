@@ -35,6 +35,7 @@ const defaultBalances = {
 let currentRole = "";
 
 // ---------------- INIT ----------------
+// ---------------- INIT ----------------
 window.onload = async function () {
     let savedRole = sessionStorage.getItem("loggedInRole");
     let savedPage = sessionStorage.getItem("activePage") || "home";
@@ -51,9 +52,22 @@ window.onload = async function () {
         show(savedPage);
         showNotifications();
         renderSuggestions();
-        renderLaws(); // <--- LISÄTTY: Lait latautuvat heti sisäänkirjautumisen jälkeen
+        renderLaws(); 
+    
+
+    const priceSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+    if (priceSnap.exists()) {
+        const data = priceSnap.data();
+        const savedPrice = data.currentPrice;
+        const priceDisplay = document.getElementById("current-coin-price");
+        if (priceDisplay) priceDisplay.innerText = savedPrice;
+
+    
+        const coinEl = document.getElementById("circulating-coins");
+        if (coinEl) coinEl.innerText = data.circulatingSupply || "245";
     }
 };
+
 // Hakee hinnan tietokannasta heti sivun latautuessa
 const priceSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
 if (priceSnap.exists()) {
@@ -61,7 +75,6 @@ if (priceSnap.exists()) {
     const priceDisplay = document.getElementById("current-coin-price");
     if (priceDisplay) priceDisplay.innerText = savedPrice;
 }
- 
 // ---------------- BALANCE ----------------
 async function getBalance(role) {
     const ref = doc(db, "users", role);
@@ -71,6 +84,12 @@ async function getBalance(role) {
 
 async function setBalance(role, amount) {
     await setDoc(doc(db, "users", role), { balance: amount }, { merge: true });
+}
+async function getDigikolikkoBalance(role) {
+    const ref = doc(db, "users", role);
+    const snap = await getDoc(ref);
+    // Jos kenttää 'digikolikot' ei löydy, palautetaan 0
+    return snap.exists() && snap.data().digikolikot ? snap.data().digikolikot : 0;
 }
 
 // ---------------- LOGIN ----------------

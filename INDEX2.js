@@ -86,14 +86,35 @@ async function setBalance(role, amount) {
 }
 
 // ---------------- LOGIN ----------------
-function login() {
+async function login() {
     const role = document.getElementById("role").value;
     const pass = document.getElementById("password").value;
-    if (passwords[role] !== pass) return alert("Väärä salasana!");
-    sessionStorage.setItem("loggedInRole", role);
-    location.reload();
-}
 
+    if (passwords[role] !== pass) {
+        return alert("Väärä salasana!");
+    }
+
+    // 1. Tallennetaan istunto
+    sessionStorage.setItem("loggedInRole", role);
+    currentRole = role;
+
+    // 2. Piilotetaan kirjautumissivu ja näytetään dashboard välittömästi
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+
+    // 3. Ladataan tiedot ilman sivun uudelleenlatausta
+    try {
+        const bal = await getBalance(currentRole);
+        document.getElementById("userBalance").textContent = parseInt(bal).toLocaleString("fi-FI");
+        
+        show('home');
+        showNotifications();
+        renderSuggestions();
+        renderLaws();
+    } catch (error) {
+        console.error("Virhe tietojen lataamisessa:", error);
+    }
+}
 // ---------------- NAV ----------------
 function show(pageId) {
     sessionStorage.setItem("activePage", pageId);

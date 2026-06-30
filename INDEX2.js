@@ -332,21 +332,27 @@ window.setDigikolikkoPrice = async function() {
 };
 // ---------------- NOTIFICATIONS ----------------
 async function showNotifications() {
+    const container = document.getElementById("all-notifications");
+    if (!container) return;
+    
     const ref = doc(db, "notifications", currentRole);
     const snap = await getDoc(ref);
-    if (!snap.exists()) return;
+    const msgs = snap.exists() ? snap.data().list : [];
     
-    let msgs = snap.data().list;
+    container.innerHTML = "<h4>Ilmoitukset:</h4>";
     
-    // Jos on viestejä, näytetään ensimmäinen popupina
-    if (msgs.length > 0) {
-        const notifBox = document.getElementById("notification-box");
-        const notifText = document.getElementById("notif-text");
-        
-        notifText.innerText = msgs[0];
-        notifBox.style.display = "block";
+    if (msgs.length === 0) {
+        container.innerHTML += "<p>Ei uusia ilmoituksia.</p>";
+        return;
     }
-}
+
+    msgs.forEach((m, index) => { 
+        container.innerHTML += `
+            <div style="background:#1e293b; padding:10px; margin:5px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;">
+                <span>${m}</span>
+                <button onclick="deleteNotification(${index})" style="margin-left:10px; cursor:pointer;">OK</button>
+            </div>`; 
+    });
 }
 async function submitSuggestion() {
     const text = document.getElementById("devSuggestion").value;
@@ -467,24 +473,20 @@ async function updateChart(newPrice) {
         digikolikkoChart.update();
     }
 }
-async function closeNotification() {
+async function deleteNotification(index) {
     const ref = doc(db, "notifications", currentRole);
     const snap = await getDoc(ref);
     if (!snap.exists()) return;
     
     let msgs = snap.data().list;
-    // Poistetaan ensimmäinen viesti (se joka näytettiin)
-    msgs.shift(); 
+    // Poistetaan yksi viesti sen indeksin perusteella
+    msgs.splice(index, 1);
     
+    // Tallennetaan päivitetty lista takaisin Firestoreen
     await setDoc(ref, { list: msgs }, { merge: true });
     
-    // Piilotetaan laatikko
-    document.getElementById("notification-box").style.display = "none";
-    
-    // Tarkistetaan onko lisää viestejä jonossa
-    if (msgs.length > 0) {
-        setTimeout(showNotifications, 500); // Näytetään seuraava hetken päästä
-    }
+    // Päivitetään näkymä välittömästi
+    showNotifications();
 }
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
@@ -510,4 +512,4 @@ window.renderLaws = renderLaws;
 window.deleteLaw = deleteLaw;
 window.setDigikolikkoPrice = setDigikolikkoPrice;
 window.updateChart = updateChart;
-window.closeNotification = closeNotification;
+window.deleteNotification = deleteNotification;

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NALLUNDAI-VePoHo</title>
   
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root{
@@ -110,7 +110,6 @@
     <p id="notif-text"></p>
     <button onclick="closeNotification()" style="padding: 10px 20px; background: #3b82f6; border: none; color: white; cursor: pointer; border-radius: 5px;">OK</button>
 </div>
-
 
 <div class="login-screen" id="loginPage">
 <div class="login-card">
@@ -253,7 +252,7 @@
 
 <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #22c55e; margin-bottom: 20px;">
     <h3>📈 Digikolikon hinnanohjaus</h3>
-    <input type="number" id="manualPrice" placeholder="Aseta uusi hinta (€)" style="width: 100%; padding: 20px; margin-bottom: 29px; color: black; border-radius: 10px;">
+    <input type="number" id="manualPrice" placeholder="Aseta uusi hinta (€)" style="width: 100%; padding: 10px; margin-bottom: 10px; color: black; border-radius: 5px;">
     <button onclick="setDigikolikkoPrice()" style="width: 100%; padding: 10px; background: #22c55e; color: white; font-weight: bold; border: none; cursor: pointer; border-radius: 5px;">PÄIVITÄ PÖRSSIKURSSI</button>
 </div>
 
@@ -318,9 +317,9 @@ Olemme kriisissä, joka koskee kaikkia. Kaiken jälkeen te kansalaiset velkaannu
             <div style="margin: 20px 0; background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #22c55e;">
                 <h3 style="text-align: center; color: #22c55e; margin-bottom: 10px;">
                     Digikolikon kurssi: <span id="current-coin-price" style="color: white;">--</span> €
-             
+                </h3>
+                <canvas id="digikolikkoChart" style="max-height: 200px; width: 100%;"></canvas>
             </div>
-                         <p>Digikolikot: <span id="userCoinBalance">0</span></p>
 
             <div style="text-align: center; margin: 20px 0; padding: 15px; background: #0f172a; border-radius: 10px; border: 1px solid #22c55e;">
                 Haluatko ostaa osakkeita? 

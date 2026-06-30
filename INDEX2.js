@@ -39,24 +39,6 @@ window.onload = async function () {
     let savedRole = sessionStorage.getItem("loggedInRole");
     let savedPage = sessionStorage.getItem("activePage") || "home";
     
-    // Siirsimme hintahaun tänne, jotta se toimii varmasti latauksen yhteydessä
-    const priceSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
-    if (priceSnap.exists()) {
-        const data = priceSnap.data();
-        const savedPrice = data.currentPrice;
-        const prevPrice = data.previousPrice || savedPrice;
-        const priceDisplay = document.getElementById("current-coin-price");
-        
-        if (priceDisplay) {
-            const diff = savedPrice - prevPrice;
-            const percent = prevPrice !== 0 ? ((diff / prevPrice) * 100).toFixed(2) : 0;
-            const color = diff > 0 ? "#22c55e" : (diff < 0 ? "#ef4444" : "#ffffff");
-            const arrow = diff > 0 ? "▲" : (diff < 0 ? "▼" : "");
-            
-            priceDisplay.innerHTML = `${savedPrice}€ <span style="color: ${color};">${arrow} ${Math.abs(percent)}%</span>`;
-        }
-    }
-    
     if (savedRole) {
         currentRole = savedRole;
         
@@ -72,6 +54,14 @@ window.onload = async function () {
         renderLaws(); // <--- LISÄTTY: Lait latautuvat heti sisäänkirjautumisen jälkeen
     }
 };
+// Hakee hinnan tietokannasta heti sivun latautuessa
+const priceSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+if (priceSnap.exists()) {
+    const savedPrice = priceSnap.data().currentPrice;
+    const priceDisplay = document.getElementById("current-coin-price");
+    if (priceDisplay) priceDisplay.innerText = savedPrice;
+}
+ 
 // ---------------- BALANCE ----------------
 async function getBalance(role) {
     const ref = doc(db, "users", role);
@@ -204,44 +194,41 @@ async function approveShopReq(docId) {
     const req = reqSnap.data();
     const price = parseInt(req.price);
 
-    // 1. Haetaan vanha hinta ja tallennetaan se previousPrice-kenttään
-    const hintaRef = doc(db, "digikolikko", "hintaData");
-    const hintaSnap = await getDoc(hintaRef);
-    let oldPrice = hintaSnap.exists() ? hintaSnap.data().currentPrice : 500;
+    // 1. Lasketaan hinnan nousu (1000€ = +0.1%, 10 000€ = +1%)
+    const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+    let currentPrice = hintaSnap.exists() ? hintaSnap.data().currentPrice : 500;
     
-    // 2. Lasketaan uusi hinta
+    // Kaava: jokainen 1000€ tuo 0.001 (0.1%) lisäyksen
     const increaseFactor = (price / 1000) * 0.001;
-    const newPrice = Math.round(oldPrice * (1 + increaseFactor));
+    const newPrice = Math.round(currentPrice * (1 + increaseFactor));
 
-    // 3. Tallennetaan uusi ja vanha hinta
-    await setDoc(hintaRef, { 
-        currentPrice: newPrice, 
-        previousPrice: oldPrice 
-    }, { merge: true });
+    // 2. Päivitetään uusi hinta tietokantaan
+    await setDoc(doc(db, "digikolikko", "hintaData"), { currentPrice: newPrice }, { merge: true });
 
-    // 4. Suoritetaan rahansiirto
+    // 3. Suoritetaan rahansiirto
     let buyerBal = await getBalance(req.role);
     let valtioBal = await getBalance("Valtio");
     await setBalance(req.role, buyerBal - price);
     await setBalance("Valtio", valtioBal + price);
 
-    // 5. Ilmoitus
+    // 4. Päivitetään ilmoitus (sisältää tiedon uudesta hinnasta)
     const notifRef = doc(db, "notifications", req.role);
     const notifSnap = await getDoc(notifRef);
     let notifs = notifSnap.exists() ? notifSnap.data().list : [];
-    notifs.push(`✅ OSTOS HYVÄKSYTTY: ${req.item} (-${price}€).`);
+    notifs.push(`✅ OSTOS HYVÄKSYTTY: ${req.item} (-${price}€). Digikolikon uusi hinta: ${newPrice}€`);
     await setDoc(notifRef, { list: notifs }, { merge: true });
 
     await deleteDoc(reqRef);
     
-    // 6. Päivitetään näkymä ja pörssin näyttö
-    updatePriceDisplay();
+    // 5. Päivitetään näkymä
     showAdminPanel();
     
+    // Päivitetään myös pörssigraafi, jos se on ladattu
     if (typeof updateChart === 'function') {
         updateChart(newPrice);
     }
 }
+
 async function rejectShopReq(docId) {
     const reqRef = doc(db, "pendingRequests", docId);
     const reqSnap = await getDoc(reqRef);
@@ -491,27 +478,6 @@ async function deleteNotification(index) {
     
     // Päivitetään näkymä välittömästi
     showNotifications();
-}
-async function updatePriceDisplay() {
-    const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
-    if (!hintaSnap.exists()) return;
-    
-    const data = hintaSnap.data();
-    const current = data.currentPrice;
-    const previous = data.previousPrice || current;
-    
-    const display = document.getElementById("current-coin-price");
-    if (!display) return;
-
-    // Laskenta
-    const diff = current - previous;
-    const percent = previous !== 0 ? ((diff / previous) * 100).toFixed(2) : 0;
-    
-    // Väritys
-    let color = diff > 0 ? "#22c55e" : (diff < 0 ? "#ef4444" : "#ffffff");
-    let arrow = diff > 0 ? "▲" : (diff < 0 ? "▼" : "");
-    
-    display.innerHTML = `${current}€ <span style="color: ${color};">${arrow} ${Math.abs(percent)}%</span>`;
 }
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;

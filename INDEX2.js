@@ -331,28 +331,19 @@ window.setDigikolikkoPrice = async function() {
     alert("Pörssikurssi päivitetty: " + newPrice + " €");
 };
 // ---------------- NOTIFICATIONS ----------------
-async function showNotifications() {
+unction showNotifications() {
     const container = document.getElementById("all-notifications");
     if (!container) return;
-    
-    const ref = doc(db, "notifications", currentRole);
-    const snap = await getDoc(ref);
-    const msgs = snap.exists() ? snap.data().list : [];
-    
-    container.innerHTML = "<h4>Ilmoitukset:</h4>";
-    
-    if (msgs.length === 0) {
-        container.innerHTML += "<p>Ei uusia ilmoituksia.</p>";
-        return;
-    }
+    let msgs = JSON.parse(localStorage.getItem("user_notifs_" + currentRole) || "[]");
+    container.innerHTML = "";
+    msgs.forEach((m, i) => container.innerHTML += `<div>${m} <button onclick="dismissNotif(${i})">OK</button></div>`);
+}
 
-    msgs.forEach((m, index) => { 
-        container.innerHTML += `
-            <div style="background:#1e293b; padding:10px; margin:5px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;">
-                <span>${m}</span>
-                <button onclick="deleteNotification(${index})" style="margin-left:10px; cursor:pointer;">OK</button>
-            </div>`; 
-    });
+function dismissNotif(i) {
+    let msgs = JSON.parse(localStorage.getItem("user_notifs_" + currentRole) || "[]");
+    msgs.splice(i, 1);
+    localStorage.setItem("user_notifs_" + currentRole, JSON.stringify(msgs));
+    showNotifications();
 }
 async function submitSuggestion() {
     const text = document.getElementById("devSuggestion").value;

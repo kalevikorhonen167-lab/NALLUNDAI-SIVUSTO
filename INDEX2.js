@@ -37,18 +37,14 @@ let digikolikkoChart = null; // Lisätty muuttuja graafille
 
 // ---------------- INIT ----------------
 window.onload = async function () {
-    // 1. Haetaan istunnon tila
     let savedRole = sessionStorage.getItem("loggedInRole");
     let savedPage = sessionStorage.getItem("activePage") || "home";
     
     if (savedRole) {
-        // Käyttäjä on kirjautunut – nyt vasta haetaan dataa
         currentRole = savedRole;
-        
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("dashboard").style.display = "block";
         
-        // HAETAAN HINTA VAIN KIRJAUTUNEENA
         try {
             const priceSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
             if (priceSnap.exists()) {
@@ -60,7 +56,6 @@ window.onload = async function () {
             console.error("Hinnan haku epäonnistui:", e);
         }
         
-        // HAETAAN MUU DATA
         const bal = await getBalance(currentRole);
         document.getElementById("userBalance").textContent = parseInt(bal).toLocaleString("fi-FI");
         
@@ -69,15 +64,16 @@ window.onload = async function () {
         renderSuggestions();
         renderLaws();
 
-        // Alustetaan graafi ja reaaliaikainen kuuntelu[cite: 4]
         await initChart();
+
+        // KORJATTU KUUNTELIJA:
         onSnapshot(doc(db, "digikolikko", "hintaData"), (doc) => {
-            if (doc.exists()) {
+            // Lisätään ehto: päivitetään vain jos kyseessä ei ole välimuistista tuleva lataus
+            if (doc.exists() && !doc.metadata.fromCache) {
                 updateChart(doc.data().currentPrice);
             }
         });
     } else {
-        // Jos ei kirjautunut, näytetään vain kirjautumissivu
         document.getElementById("loginPage").style.display = "flex";
         document.getElementById("dashboard").style.display = "none";
     }

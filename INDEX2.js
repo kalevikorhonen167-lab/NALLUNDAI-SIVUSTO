@@ -463,7 +463,12 @@ async function initChart() {
 
     // Haetaan yhteinen historia tietokannasta
     const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
-    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 500}];
+    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 20000}];
+
+    // Lasketaan min- ja max-arvot datasta skaalausta varten
+    const prices = history.map(h => h.price);
+    const minP = Math.min(...prices);
+    const maxP = Math.max(...prices);
 
     // Luodaan graafi
     digikolikkoChart = new Chart(canvas.getContext('2d'), {
@@ -482,35 +487,15 @@ async function initChart() {
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            scales: { y: { beginAtZero: false } }
+            scales: { 
+                y: { 
+                    beginAtZero: false,
+                    min: 9000,   // Kiinteä alaraja
+                    max: 900000  // Kiinteä yläraja
+                } 
+            }
         }
     });
-}
-
-async function updateChart(newPrice) {
-    const histRef = doc(db, "digikolikko", "hintaHistoria");
-    const histSnap = await getDoc(histRef);
-    let history = histSnap.exists() ? histSnap.data().list : [];
-    
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    // Lisätään uusi piste
-    history.push({ time, price: newPrice });
-    
-    // Pidetään listan pituus maksimissaan 20:ssä
-    while (history.length > 20) {
-        history.shift(); // Poistaa vanhimman
-    }
-    
-    // Tallennetaan päivitetty lista Firestoreen
-    await setDoc(histRef, { list: history }, { merge: true });
-
-    // Päivitetään graafi käyttöliittymässä
-    if (digikolikkoChart) {
-        digikolikkoChart.data.labels = history.map(h => h.time);
-        digikolikkoChart.data.datasets[0].data = history.map(h => h.price);
-        digikolikkoChart.update();
-    }
 }
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;

@@ -467,19 +467,16 @@ async function initChart() {
 
     // Haetaan yhteinen historia tietokannasta
     const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
-    const history = histSnap.exists() ? histSnap.data().list : [];
+    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 500}];
 
-    // Jos historiaa ei löydy, alustetaan yhdellä pisteellä
-    const labels = history.length > 0 ? history.map(h => h.time) : ['Alku'];
-    const dataPoints = history.length > 0 ? history.map(h => h.price) : [500];
-
+    // Luodaan graafi
     digikolikkoChart = new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
-            labels: labels,
+            labels: history.map(h => h.time),
             datasets: [{
                 label: 'Digikolikko (€)',
-                data: dataPoints,
+                data: history.map(h => h.price),
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.2)',
                 fill: true,
@@ -489,30 +486,30 @@ async function initChart() {
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: false } // Varmistaa, että hintavaihtelu näkyy graafissa paremmin
-            }
+            scales: { y: { beginAtZero: false } }
         }
     });
 }
 
 async function updateChart(newPrice) {
-    // 1. Haetaan nykyinen historia tietokannasta
     const histRef = doc(db, "digikolikko", "hintaHistoria");
     const histSnap = await getDoc(histRef);
     let history = histSnap.exists() ? histSnap.data().list : [];
     
-    // Lisätään uusi hintapiste
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    // Lisätään uusi piste
     history.push({ time, price: newPrice });
     
-    // Pidetään vain 20 viimeisintä
-    if (history.length > 20) history.shift();
+    // Pidetään listan pituus maksimissaan 20:ssä
+    while (history.length > 20) {
+        history.shift(); // Poistaa vanhimman
+    }
     
-    // Tallennetaan päivitetty historia tietokantaan
+    // Tallennetaan päivitetty lista Firestoreen
     await setDoc(histRef, { list: history }, { merge: true });
 
-    // 2. Päivitetään paikallinen graafi, jos se on olemassa
+    // Päivitetään graafi käyttöliittymässä
     if (digikolikkoChart) {
         digikolikkoChart.data.labels = history.map(h => h.time);
         digikolikkoChart.data.datasets[0].data = history.map(h => h.price);

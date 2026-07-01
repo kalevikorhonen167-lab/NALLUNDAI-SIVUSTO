@@ -498,7 +498,7 @@ async function updateChart(newPrice) {
     history.push({ time, price: newPrice });
     
     // Pidetään listan pituus maksimissaan 20:ssä
-    while (history.length > 25) {
+    while (history.length > 20) {
         history.shift(); // Poistaa vanhimman
     }
     

@@ -497,8 +497,8 @@ async function updateChart(newPrice) {
     // Lisätään uusi piste
     history.push({ time, price: newPrice });
     
-    // Pidetään listan pituus maksimissaan 20:ssä
-    while (history.length > 20) {
+    // Pidetään listan pituus maksimissaan 10:ssä
+    while (history.length > 10) {
         history.shift(); // Poistaa vanhimman
     }
     

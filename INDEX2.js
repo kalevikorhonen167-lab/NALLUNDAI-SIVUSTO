@@ -482,7 +482,7 @@ async function initChart() {
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } }
+            scales: { y: { beginAtZero: false } }
         }
     });
 }
@@ -497,7 +497,7 @@ async function updateChart(newPrice) {
     // Lisätään uusi piste
     history.push({ time, price: newPrice });
     
-    while (history.length > 30) {
+    while (history.length > 25) {
         history.shift(); // Poistaa vanhimman
     }
     

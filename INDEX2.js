@@ -501,7 +501,7 @@ async function initChart() {
                 y: { 
                     beginAtZero: false,
                     min: 9000,   // Kiinteä alaraja
-                    max: 900000, // Kiinteä yläraja
+                    max: 100000, // Kiinteä yläraja
                     ticks: {
                         count: 7 // Pakottaa 7 hintatasoa
                     }

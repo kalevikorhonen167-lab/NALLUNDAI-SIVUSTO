@@ -463,7 +463,7 @@ async function initChart() {
 
     // Haetaan yhteinen historia tietokannasta
     const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
-    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 500}];
+    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 15000}];
 
     // Luodaan graafi
     digikolikkoChart = new Chart(canvas.getContext('2d'), {
@@ -498,7 +498,7 @@ async function updateChart(newPrice) {
     history.push({ time, price: newPrice });
     
     // Pidetään listan pituus maksimissaan 10:ssä
-    while (history.length > 20) {
+    while (history.length > 25) {
         history.shift(); // Poistaa vanhimman
     }
     

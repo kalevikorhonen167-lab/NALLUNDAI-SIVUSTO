@@ -480,7 +480,7 @@ async function initChart() {
     const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
     let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 20000}];
 
-    // Luodaan graafi
+    // Luodaan graafi ilman kiinteitä rajoja (skaalautuu automaattisesti)
     digikolikkoChart = new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
@@ -499,17 +499,11 @@ async function initChart() {
             maintainAspectRatio: false,
             scales: { 
                 y: { 
-                    beginAtZero: false,
-                    min: 9000,   // Kiinteä alaraja
-                    max: 100000, // Kiinteä yläraja
-                    ticks: {
-
-                    }
+                    beginAtZero: false // Automaattinen skaalaus hinnan mukaan
                 } 
             }
         }
     });
-}
 
 async function updateChart(newPrice) {
     const histRef = doc(db, "digikolikko", "hintaHistoria");

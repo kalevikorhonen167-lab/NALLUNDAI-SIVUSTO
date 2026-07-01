@@ -470,7 +470,6 @@ async function deleteNotification(index) {
     
     // Päivitetään näkymä välittömästi
     showNotifications();
-}
 // ---------------- DIGIKOLIKKO-GRAAFI ----------------
 async function initChart() {
     const canvas = document.getElementById('digikolikkoChart');
@@ -478,7 +477,7 @@ async function initChart() {
 
     // Haetaan yhteinen historia tietokannasta
     const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
-    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 20000}];
+    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 15000}];
 
     // Luodaan graafi
     digikolikkoChart = new Chart(canvas.getContext('2d'), {
@@ -491,22 +490,13 @@ async function initChart() {
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.2)',
                 fill: true,
-                tension: 0.1
+                tension: 0.3
             }]
         },
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            scales: { 
-                y: { 
-                    beginAtZero: false,
-                    min: 9000,   // Kiinteä alaraja
-                    max: 100000, // Kiinteä yläraja
-                    ticks: {
-                        count: 7 // Pakottaa 7 hintatasoa
-                    }
-                } 
-            }
+            scales: { y: { beginAtZero: false } }
         }
     });
 }
@@ -518,18 +508,12 @@ async function updateChart(newPrice) {
     
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     
-    // ESTETÄÄN TUPLAPISTEET: Tarkistetaan, onko viimeisin piste sama kuin uusi
-    if (history.length > 0) {
-        const last = history[history.length - 1];
-        if (last.price === newPrice) return; 
-    }
-    
     // Lisätään uusi piste
     history.push({ time, price: newPrice });
     
-    // Pidetään listan pituus maksimissaan 25:ssä
-    while (history.length > 25) {
-        history.shift(); 
+    // Pidetään listan pituus maksimissaan 10:ssä
+    while (history.length > 200) {
+        history.shift(); // Poistaa vanhimman
     }
     
     // Tallennetaan päivitetty lista Firestoreen

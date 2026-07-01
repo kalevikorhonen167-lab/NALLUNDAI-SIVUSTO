@@ -458,35 +458,54 @@ window.deleteLaw = async function(id) {
 };
 // ---------------- DIGIKOLIKKO-GRAAFI ----------------
 async function initChart() {
+    const canvas = document.getElementById('digikolikkoChart');
+    if (!canvas) return; 
+
+    // Haetaan yhteinen historia tietokannasta
+    const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
+    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 500}];
+
+    // Luodaan graafi
+    digikolikkoChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: history.map(h => h.time),
+            datasets: [{
+                label: 'Digikolikko (€)',
+                data: history.map(h => h.price),
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: false } }
+        }
+    });
+}
+
 async function updateChart(newPrice) {
     const histRef = doc(db, "digikolikko", "hintaHistoria");
     const histSnap = await getDoc(histRef);
     let history = histSnap.exists() ? histSnap.data().list : [];
     
-    // 1. TARKISTUS: Estetään duplikaatit, jos hinta on jo sama
-    const lastEntry = history[history.length - 1];
-    if (lastEntry && lastEntry.price === newPrice) return; 
-    
-    // 2. Päivitetään pörssikurssi-teksti heti näytölle (synkronointi)[cite: 6]
-    const priceDisplay = document.getElementById("current-coin-price");
-    if (priceDisplay) {
-        priceDisplay.innerText = newPrice;
-    }
-    
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     
-    // 3. Lisätään uusi piste[cite: 6]
+    // Lisätään uusi piste
     history.push({ time, price: newPrice });
     
-    // 4. Pidetään listan pituus maksimissaan 20:ssä[cite: 6]
+    // Pidetään listan pituus maksimissaan 20:ssä
     while (history.length > 20) {
-        history.shift(); 
+        history.shift(); // Poistaa vanhimman
     }
     
-    // 5. Tallennetaan päivitetty lista Firestoreen[cite: 6]
+    // Tallennetaan päivitetty lista Firestoreen
     await setDoc(histRef, { list: history }, { merge: true });
 
-    // 6. Päivitetään graafi käyttöliittymässä[cite: 6]
+    // Päivitetään graafi käyttöliittymässä
     if (digikolikkoChart) {
         digikolikkoChart.data.labels = history.map(h => h.time);
         digikolikkoChart.data.datasets[0].data = history.map(h => h.price);

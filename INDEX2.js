@@ -33,6 +33,7 @@ const defaultBalances = {
 };
 
 let currentRole = "";
+let digikolikkoChart = null; // Lisätty muuttuja graafille
 
 // ---------------- INIT ----------------
 window.onload = async function () {
@@ -67,6 +68,14 @@ window.onload = async function () {
         showNotifications();
         renderSuggestions();
         renderLaws();
+
+        // Alustetaan graafi ja reaaliaikainen kuuntelu[cite: 4]
+        await initChart();
+        onSnapshot(doc(db, "digikolikko", "hintaData"), (doc) => {
+            if (doc.exists()) {
+                updateChart(doc.data().currentPrice);
+            }
+        });
     } else {
         // Jos ei kirjautunut, näytetään vain kirjautumissivu
         document.getElementById("loginPage").style.display = "flex";
@@ -452,9 +461,13 @@ window.deleteLaw = async function(id) {
     renderLaws();
 };
 // ---------------- DIGIKOLIKKO-GRAAFI ----------------
-function initChart() {
+async function initChart() {
     const canvas = document.getElementById('digikolikkoChart');
     if (!canvas) return; 
+
+    // Haetaan alkuhinta tietokannasta[cite: 4]
+    const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
+    const startPrice = hintaSnap.exists() ? hintaSnap.data().currentPrice : 500;
 
     digikolikkoChart = new Chart(canvas.getContext('2d'), {
         type: 'line',
@@ -462,7 +475,7 @@ function initChart() {
             labels: ['Alku'],
             datasets: [{
                 label: 'Digikolikko (€)',
-                data: [500],
+                data: [startPrice],
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.2)',
                 fill: true,

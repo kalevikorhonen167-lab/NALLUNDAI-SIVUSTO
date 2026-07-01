@@ -512,6 +512,20 @@ async function updateChart(newPrice) {
         digikolikkoChart.update();
     }
 }
+Async Toiminta deleteNotification(Indeksi) {
+    const viite = doc(DB, "Ilmoitukset", nykyinen rooli);
+    const napsahdus = odota getDoc(viite);
+    jos (!napsahdus.on olemassa()) Paluu;
+    
+    olkoon Viestit = napsahdus.Data().Lista;
+    Poistetaan yksi viesti sen indeksin perusteella
+    Viestit.liitos(Indeksi, 1);
+    
+    // Tallennetaan päivitetty lista takaisin Firestoreen
+    odota setDoc(viite, { Lista: Viestit }, { Yhdistyminen: Totta });
+    
+    Päivitetään näkymä välittömästi
+    showNotifications();
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;
 window.show = show;

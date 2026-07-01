@@ -465,17 +465,20 @@ async function initChart() {
     const canvas = document.getElementById('digikolikkoChart');
     if (!canvas) return; 
 
-    // Haetaan alkuhinta tietokannasta[cite: 4]
-    const hintaSnap = await getDoc(doc(db, "digikolikko", "hintaData"));
-    const startPrice = hintaSnap.exists() ? hintaSnap.data().currentPrice : 500;
+    // Haetaan yhteinen historia tietokannasta
+    const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
+    const history = histSnap.exists() ? histSnap.data().list : [];
+
+    // Jos historia on tyhjä, käytetään oletushintaa
+    const initialData = history.length > 0 ? history : [{time: "Alku", price: 500}];
 
     digikolikkoChart = new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
-            labels: ['Alku'],
+            labels: initialData.map(h => h.time),
             datasets: [{
                 label: 'Digikolikko (€)',
-                data: [startPrice],
+                data: initialData.map(h => h.price),
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.2)',
                 fill: true,
@@ -487,31 +490,26 @@ async function initChart() {
 }
 
 async function updateChart(newPrice) {
+    // 1. Päivitetään historia tietokantaan (vain Valtio tai transaktion tekijä voisi tämän teoriassa tehdä, 
+    // mutta koska käytät onSnapshotia, riittää että joku päivittää tämän)
+    const histRef = doc(db, "digikolikko", "hintaHistoria");
+    const histSnap = await getDoc(histRef);
+    let history = histSnap.exists() ? histSnap.data().list : [];
+    
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    history.push({ time, price: newPrice });
+    
+    // Pidetään 20 viimeisintä
+    if (history.length > 20) history.shift();
+    
+    await setDoc(histRef, { list: history }, { merge: true });
+
+    // 2. Päivitetään paikallinen graafi, jos se on auki
     if (digikolikkoChart) {
-        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        digikolikkoChart.data.labels.push(time);
-        digikolikkoChart.data.datasets[0].data.push(newPrice);
-        if (digikolikkoChart.data.labels.length > 20) {
-            digikolikkoChart.data.labels.shift();
-            digikolikkoChart.data.datasets[0].data.shift();
-        }
+        digikolikkoChart.data.labels = history.map(h => h.time);
+        digikolikkoChart.data.datasets[0].data = history.map(h => h.price);
         digikolikkoChart.update();
     }
-}
-async function deleteNotification(index) {
-    const ref = doc(db, "notifications", currentRole);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return;
-    
-    let msgs = snap.data().list;
-    // Poistetaan yksi viesti sen indeksin perusteella
-    msgs.splice(index, 1);
-    
-    // Tallennetaan päivitetty lista takaisin Firestoreen
-    await setDoc(ref, { list: msgs }, { merge: true });
-    
-    // Päivitetään näkymä välittömästi
-    showNotifications();
 }
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;

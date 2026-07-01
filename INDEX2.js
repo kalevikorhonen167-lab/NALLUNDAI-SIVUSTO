@@ -476,7 +476,7 @@ async function initChart() {
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.2)',
                 fill: true,
-                tension: 0.3
+                tension: 0.0
             }]
         },
         options: { 
@@ -498,7 +498,7 @@ async function updateChart(newPrice) {
     history.push({ time, price: newPrice });
     
     // Pidetään listan pituus maksimissaan 20:ssä
-    while (history.length > 20) {
+    while (history.length > 30) {
         history.shift(); // Poistaa vanhimman
     }
     

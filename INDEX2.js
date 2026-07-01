@@ -458,59 +458,58 @@ window.deleteLaw = async function(id) {
 };
 // ---------------- DIGIKOLIKKO-GRAAFI ----------------
 async function initChart() {
-    const canvas = document.getElementById('digikolikkoChart');
-    if (!canvas) return; 
+    const canvas = document.getElementById('digikolikkoChart');
+    if (!canvas) return; 
 
-    // Haetaan yhteinen historia tietokannasta
-    const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
-    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 500}];
+    // Haetaan yhteinen historia tietokannasta
+    const histSnap = await getDoc(doc(db, "digikolikko", "hintaHistoria"));
+    let history = histSnap.exists() ? histSnap.data().list : [{time: "Alku", price: 500}];
 
-    // Luodaan graafi
-    digikolikkoChart = new Chart(canvas.getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: history.map(h => h.time),
-            datasets: [{
-                label: 'Digikolikko (€)',
-                data: history.map(h => h.price),
-                borderColor: '#22c55e',
-                backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                fill: true,
-                tension: 0.3
-            }]
-        },
-        options: { 
-            responsive: true, 
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: false } }
-        }
-    });
+    // Luodaan graafi
+    digikolikkoChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: history.map(h => h.time),
+            datasets: [{
+                label: 'Digikolikko (€)',
+                data: history.map(h => h.price),
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                fill: true,
+                tension: 0.1
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
 }
 
 async function updateChart(newPrice) {
-    const histRef = doc(db, "digikolikko", "hintaHistoria");
-    const histSnap = await getDoc(histRef);
-    let history = histSnap.exists() ? histSnap.data().list : [];
-    
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    // Lisätään uusi piste
-    history.push({ time, price: newPrice });
-    
-    // Pidetään listan pituus maksimissaan 20:ssä
-    while (history.length > 20) {
-        history.shift(); // Poistaa vanhimman
-    }
-    
-    // Tallennetaan päivitetty lista Firestoreen
-    await setDoc(histRef, { list: history }, { merge: true });
+    const histRef = doc(db, "digikolikko", "hintaHistoria");
+    const histSnap = await getDoc(histRef);
+    let history = histSnap.exists() ? histSnap.data().list : [];
+    
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    // Lisätään uusi piste
+    history.push({ time, price: newPrice });
+    
+    while (history.length > 30) {
+        history.shift(); // Poistaa vanhimman
+    }
+    
+    // Tallennetaan päivitetty lista Firestoreen
+    await setDoc(histRef, { list: history }, { merge: true });
 
-    // Päivitetään graafi käyttöliittymässä
-    if (digikolikkoChart) {
-        digikolikkoChart.data.labels = history.map(h => h.time);
-        digikolikkoChart.data.datasets[0].data = history.map(h => h.price);
-        digikolikkoChart.update();
-    }
+    // Päivitetään graafi käyttöliittymässä
+    if (digikolikkoChart) {
+        digikolikkoChart.data.labels = history.map(h => h.time);
+        digikolikkoChart.data.datasets[0].data = history.map(h => h.price);
+        digikolikkoChart.update();
+    }
 }
 // ---------------- WINDOW-SIDOKSET ----------------
 window.login = login;

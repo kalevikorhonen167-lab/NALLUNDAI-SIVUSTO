@@ -547,7 +547,7 @@ async function updateChart(newPrice) {
     // Tallennetaan päivitetty lista Firestoreen
     await setDoc(histRef, { list: history }, { merge: true });
 
-  
+    // Päivitetään graafi käyttöliittymässä
     if (digikolikkoChart) {
         digikolikkoChart.data.labels = history.map(h => h.time);
         digikolikkoChart.data.datasets[0].data = history.map(h => h.price);

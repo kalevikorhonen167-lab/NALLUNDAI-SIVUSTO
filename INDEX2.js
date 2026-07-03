@@ -518,7 +518,7 @@ async function initChart() {
                 borderColor: '#22c55e',
                 backgroundColor: 'rgba(34, 197, 94, 0.2)',
                 fill: true,
-                tension: 0.3
+                tension: 0.0
             }]
         },
         options: { 

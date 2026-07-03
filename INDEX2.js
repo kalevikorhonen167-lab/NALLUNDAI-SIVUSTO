@@ -286,29 +286,37 @@ async function submitTransferRequest() {
     await addDoc(collection(db, "moneyRequests"), { from: currentRole, to, amount: parseInt(amount), reason, createdAt: Date.now() });
     alert("Siirtopyyntö lähetetty!");
 }
-
 // ---------------- ADMIN PANEL ----------------
-async function showAdminPanel() {
+window.showAdminPanel = async function() {
     if (currentRole !== "Valtio") return;
-    document.getElementById("admin-content").style.display = "block";
+    
+    const adminContent = document.getElementById("admin-content");
+    if (adminContent) adminContent.style.display = "block";
     
     // Saldot
     const balC = document.getElementById("all-balances");
-    balC.innerHTML = "<h3>Saldot:</h3>";
-    for (let r in passwords) {
-        const b = await getBalance(r);
-        balC.innerHTML += `<div>${r}: ${b.toLocaleString()}€</div>`;
+    if (balC) {
+        balC.innerHTML = "<h3>Saldot:</h3>";
+        for (let r in passwords) {
+            const b = await getBalance(r);
+            balC.innerHTML += `<div>${r}: ${b.toLocaleString()}€</div>`;
+        }
     }
     
     // Siirtopyynnöt
     const trans = await getDocs(collection(db, "moneyRequests"));
     const transC = document.getElementById("money-request-list");
-    transC.innerHTML = "<h4>Siirtopyynnöt</h4>";
-    trans.docs.forEach(d => {
-        const r = d.data();
-        transC.innerHTML += `<div>${r.from} → ${r.to}: ${r.amount}€ <button onclick="approveTransfer('${d.id}')">✅</button><button onclick="rejectTransfer('${d.id}')">❌</button></div>`;
-    });
-    
+    if (transC) {
+        transC.innerHTML = "<h4>Siirtopyynnöt</h4>";
+        trans.docs.forEach(d => {
+            const r = d.data();
+            // Nappi kutsuu approveTransfer-funktiota, joka hoitaa poiston ja päivityksen
+            transC.innerHTML += `<div>${r.from} → ${r.to}: ${r.amount}€ 
+                <button onclick="approveTransfer('${d.id}')">✅</button>
+                <button onclick="rejectTransfer('${d.id}')">❌</button></div>`;
+        });
+    }
+};
     // Ostopyynnöt ja pörssikurssin näyttö
     const shop = await getDocs(collection(db, "pendingRequests"));
     const shopC = document.getElementById("request-list");
@@ -455,6 +463,40 @@ window.deleteLaw = async function(id) {
     if (!confirm("Haluatko varmasti poistaa tämän lain?")) return;
     await deleteDoc(doc(db, "laws", id));
     renderLaws();
+};
+window.approveTransfer = async function(docId) {
+    const reqRef = doc(db, "moneyRequests", docId);
+    const reqSnap = await getDoc(reqRef);
+    
+    if (!reqSnap.exists()) {
+        console.error("Pyyntöä ei löytynyt!");
+        return;
+    }
+    
+    const req = reqSnap.data();
+    console.log("Hyväksytään siirto:", req); // Tämä näkyy selaimen konsolissa (F12)
+
+    // Haetaan nykyiset saldot
+    let fromBal = await getBalance(req.from);
+    let toBal = await getBalance(req.to);
+    
+    console.log("Saldot ennen: Lähettäjä", fromBal, "Vastaanottaja", toBal);
+
+    // Lasketaan uudet saldot
+    const amount = parseInt(req.amount);
+    const newFromBal = fromBal - amount;
+    const newToBal = toBal + amount;
+
+    // Päivitetään tietokantaan
+    await setBalance(req.from, newFromBal);
+    await setBalance(req.to, newToBal);
+    
+    console.log("Saldot päivitetty: Lähettäjä", newFromBal, "Vastaanottaja", newToBal);
+
+    // Poistetaan pyyntö ja päivitetään näkymä
+    await deleteDoc(reqRef);
+    alert("Siirto hyväksytty!");
+    showAdminPanel();
 };
 // ---------------- DIGIKOLIKKO-GRAAFI ----------------
 async function initChart() {

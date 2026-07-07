@@ -158,7 +158,7 @@ async function renderShop() {
         if (filtered.length) {
             container.innerHTML += `<h3>${cat}</h3>`;
             filtered.forEach(item => {
-            
+                // Lisätty punainen reunus, jos item.isSoldOut on true
                 container.innerHTML += `
                     <div style="padding:10px; margin:10px; background:#1e293b; ${item.isSoldOut ? 'border: 2px solid red;' : ''}">
                         <strong>${item.name}</strong> - ${item.price}€
@@ -240,7 +240,12 @@ async function approveShopReq(docId) {
     // 5. Päivitetään näkymä
     showAdminPanel();
     
-   
+    // Päivitetään myös pörssigraafi, jos se on ladattu
+    if (typeof updateChart === 'function') {
+        updateChart(newPrice);
+    }
+}
+
 async function rejectShopReq(docId) {
     const reqRef = doc(db, "pendingRequests", docId);
     const reqSnap = await getDoc(reqRef);
@@ -489,16 +494,11 @@ async function updateChart(newPrice) {
     
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     
-
-    // Lisätään uusi piste vain, jos hinta muuttui
-const lastPoint = history[history.length - 1];
-
-if (!lastPoint || lastPoint.price !== newPrice) {
+    // Lisätään uusi piste
     history.push({ time, price: newPrice });
-}
     
     // Pidetään listan pituus maksimissaan 20:ssä
-    while (history.length > 40) {
+    while (history.length > 20) {
         history.shift(); // Poistaa vanhimman
     }
     

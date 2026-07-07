@@ -494,8 +494,13 @@ async function updateChart(newPrice) {
     
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     
-    // Lisätään uusi piste
+
+    // Lisätään uusi piste vain, jos hinta muuttui
+const lastPoint = history[history.length - 1];
+
+if (!lastPoint || lastPoint.price !== newPrice) {
     history.push({ time, price: newPrice });
+}
     
     // Pidetään listan pituus maksimissaan 20:ssä
     while (history.length > 40) {
